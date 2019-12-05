@@ -24,8 +24,8 @@ def draw_skill_prices(T=25, J=2, seed=555):
 
     # Set initial task prices
     # Assume task 1 (social) has a lower price than 2 (non-social)
-    pi1_0 = 1
-    pi2_0 = 2
+    pi1_0 = 6.5
+    pi2_0 = 7
 
     # Draw price changes
     d_pi = np.around(np.random.normal(size=(J, T-1)), 2)

@@ -20,10 +20,10 @@ def draw_skills(n, seed=555):
     # --- Generate Skills (for now time-invariant)
     # This section is based purely on my economic intuition.
     # For now, assume that skills are positively correlated
-    skills_var = np.array([[1, 0.3], [0.3, 1]])
+    skills_var = np.array([[2, 0.3], [0.3, 2]])
 
     # I standardize skills to have mean 0
-    skills_mean = np.array([0, 0])
+    skills_mean = np.array([5, 5])
 
     # Draw skills for n observations
     skills = np.random.multivariate_normal(
@@ -54,4 +54,4 @@ def draw_skills(n, seed=555):
             for i in range(n):
                 percentiles[i, k] = sum(array[:, k] < array[i, k]) / n
         return percentiles
-    return calc_percentile(skills)
+    return skills
