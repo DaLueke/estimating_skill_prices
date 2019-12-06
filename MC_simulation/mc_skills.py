@@ -1,24 +1,24 @@
-def draw_skills(n, seed=555):
+def draw_skills(n, J, seed=555):
     """ This script draws two correlated normal distributed skills and
     calculates their percentiles.
     Arguments:
+        n           number of individuals to simulate
+        J           number of tasks
 
     Returns:
+        skills      n x J array of skills
 
     Assumptions:
-        (1) FOr now: 2 Tasks, "nonsocial" and "social"
+        (1) Skills' distribution
+        (1a) Skills' variances: Skills are positively correlated
+        (1b) Skills' means
     """
     # Import packages
     import numpy as np
 
     # Set parameter
     np.random.seed(seed)
-    n = n  # no. of observations
-    #J = 2  # For now 2 different tasks
 
-    # --------------- Data generating process:
-    # --- Generate Skills (for now time-invariant)
-    # This section is based purely on my economic intuition.
     # For now, assume that skills are positively correlated
     skills_var = np.array([[2, 0.3], [0.3, 2]])
 
@@ -29,16 +29,18 @@ def draw_skills(n, seed=555):
     skills = np.random.multivariate_normal(
         mean=skills_mean,
         cov=skills_var,
-        size=(40)
+        size=(n*J)
         )
 
+    ''' ----- This part converts skills into skill-percentiles
     # Calculate skill percentiles
     # Problem with percentiles: If the skill-percentile of a worker impacts her
     # wage, skill accumulation can only impact wage, for a growth in skills
     # in comparison to all other workers. Skill growth would in this case
     # always be an improvement in comparison to all other workers.
     def calc_percentile(array):
-        """ This function calculates the percentile of each value of the inputarray.
+        """ This function calculates the percentile of each value of the
+        inputarray.
         Input:
             array - input array with values that will be mapped
                     into percentiles.
@@ -54,4 +56,5 @@ def draw_skills(n, seed=555):
             for i in range(n):
                 percentiles[i, k] = sum(array[:, k] < array[i, k]) / n
         return percentiles
+    '''
     return skills
