@@ -1,10 +1,10 @@
 def draw_skill_prices(T=25, J=2, seed=555):
     """ Draws initial skill prices and simulates random prices changes.
     Agruments:
-        T:              Number of periods
+        T              Number of periods
 
     Returns:
-        pi1, pi2:       Prices for tasks 1 and 2
+        pi1, pi2       Prices for tasks 1 and 2
 
     Assumptions:
         (1) Initial Skill Prices
