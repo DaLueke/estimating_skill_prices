@@ -23,13 +23,15 @@ Dpi_1, Dpi_2 = (pi[:, 1] - pi[:, 0])
 
 # Define Loci and penalty terms that should be calculated
 loci = [(0.5, 0.5), (0.4, 0.6), (0.3, 0.7), (0.2, 0.8)]
-penalty_power = [1.25, 1.5, 1.75, 2, 3, 4, 5]
+penalty_power = [1.25, 1.5, 2, 2.5, 3, 4]
 
 # Define empty DataFrames that will carry the results of this program
 rslt = pd.DataFrame(index=penalty_power, columns=loci)
 rslt_difference = pd.DataFrame(index=penalty_power, columns=loci)
 count_corner_sol = pd.DataFrame(index=penalty_power, columns=loci)
-correlations = pd.DataFrame(index=penalty_power, columns=loci)
+corr_lmb_bar_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
+corr_d_w_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
+corr_d_w_lmb_bar = pd.DataFrame(index=penalty_power, columns=loci)
 task_adjustments = pd.DataFrame(index=penalty_power, columns=loci)
 
 # calculate true parameters for estimators
@@ -83,7 +85,15 @@ for l in range(0, len(loci)):
         D_lmb = np.array(mc_data.loc[idx[:, "lambda"], 1]
                          - mc_data.loc[idx[:, "lambda"], 0]).astype(float)
 
-        correlations.iloc[p, l] = np.corrcoef(lmb_bar, D_lmb).round(4)
+        corr_lmb_bar_d_lmb.iloc[p, l] = np.corrcoef(lmb_bar, D_lmb).round(4)
+        corr_d_w_d_lmb.iloc[p, l] = np.corrcoef(np.array(wage_change
+                                                         ).astype(float),
+                                                D_lmb
+                                                ).round(4)
+
+        corr_d_w_lmb_bar.iloc[p, l] = np.corrcoef(np.array(wage_change
+                                                           ).astype(float),
+                                                  lmb_bar).round(4)
 
         # store task adjustments
         task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
@@ -94,9 +104,13 @@ print("estimation coefficients: ", "\n",
       "deviation from true parameters: ", "\n",
       rslt_difference, "\n",
       "correlation between lmb_bar and D_lmb: ", "\n",
-      correlations, "\n"
+      corr_lmb_bar_d_lmb, "\n",
+      "correlation between D_lmb and D_w", "\n",
+      corr_d_w_d_lmb, "\n",
+      "correlation between lmb_bar and D_w", "\n",
+      corr_d_w_lmb_bar, "\n",
       "mean task adjustments: ", "\n",
-      task_adjustments, "\n"
+      task_adjustments, "\n",
       )
 #rslt_difference
 
