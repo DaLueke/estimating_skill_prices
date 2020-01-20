@@ -10,6 +10,9 @@ def mc_optimal_wage_choice(
     and utility. This is done for all time periods.
     Results are returned as multiindex-dataframe.
 
+    All calculations are performed in terms of lambda_2, the share spent on
+    the second task.
+
     Arguments:
         seed            needed for skill and price simulations
         n               number of individuals to simulate
@@ -56,11 +59,13 @@ def mc_optimal_wage_choice(
     # Define individual wage as a function of worktime shares including a
     # standard normal dist. errorterm
     def wage(lmb, i, t):
-        return lmb*(sim_skills[i, :] + sim_prices[:, t])[0] \
-            + (1-lmb)*(sim_skills[i, :] + sim_prices[:, t])[1]
+        return (1-lmb)*(sim_skills[i, :] + sim_prices[:, t])[0] \
+            + (lmb)*(sim_skills[i, :] + sim_prices[:, t])[1]
 
     # Define utility as a function of wage and worktime shares
     # Note: defined negative to use minimizing function
+    # TODO: Does the current version actually work for log_utility?
+    #       Does the locus-arg result in error?
     def utility_log(lmb, i, t):
         return -1*(wage(lmb, i, t) + np.log(lmb) + np.log(1-lmb))
 
