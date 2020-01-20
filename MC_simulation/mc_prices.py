@@ -1,7 +1,9 @@
-def draw_skill_prices(T=25, J=2, seed=555):
+def draw_skill_prices(T, J, seed):
     """ Draws initial skill prices and simulates random prices changes.
     Agruments:
         T              Number of periods
+        J              Number of tasks
+        seed           Seed for random draw of prices
 
     Returns:
         pi1, pi2       Prices for tasks 1 and 2
@@ -13,22 +15,22 @@ def draw_skill_prices(T=25, J=2, seed=555):
     # import packages
     import numpy as np
 
-    # Set seed.
+    # set seed
     np.random.seed(seed)
-
-    # Define time horizon, assume we can observe 25 years
-    T = T
-
-    # Define number of Tasks
-    J = J
 
     # Set initial task prices
     # Assume task 1 (social) has a lower price than 2 (non-social)
-    pi1_0 = 6.5
-    pi2_0 = 7
+    pi1_0 = 5
+    pi2_0 = 6
 
-    # Draw price changes
-    d_pi = np.around(np.random.normal(size=(J, T-1)), 2)
+    # Draw stadard normal distributed changes in log prices
+    d_pi_normal = np.around(np.random.normal(size=(J, T-1)), 4)
+
+    # Draw changes in log prices that are uniformly distributed in [-0.2, 0.2]
+    d_pi_uniform = np.around(
+        np.random.uniform(low=-0.2, high=0.2, size=(J, T-1)),
+        4
+        )
 
     # Define price array
     pi = np.empty([J, T])
@@ -36,6 +38,6 @@ def draw_skill_prices(T=25, J=2, seed=555):
 
     # Calculate prices in each period
     for t in range(1, T):
-        pi[:, t] = pi[:, t-1] + d_pi[:, t-1]
+        pi[:, t] = pi[:, t-1] + d_pi_uniform[:, t-1]
 
     return pi
