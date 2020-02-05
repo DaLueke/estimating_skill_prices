@@ -4,52 +4,60 @@
 import pandas as pd
 import numpy as np
 import statsmodels.regression.linear_model as sms
-
-# allows to print DataFrames as whole, not truncated
-pd.set_option('display.max_rows', None, 'display.max_columns', None)
+import json
 
 # import functions from other modules
 from mc_optimal_wage_choice import mc_optimal_wage_choice
 from mc_prices import draw_skill_prices
+
+# allows to print DataFrames as whole, not truncated
+pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
 # Define indexer and parameters
 # set seed for DGP
 seed = 600
 idx = pd.IndexSlice
 
+# Define optional arguments
+kwargs = {
+          # (1) Arguments for price changing process.
+          "pi_fun": "pi_fixed",
+          "const": [0.05, 0.1]
+          }
+
 # calculate true price changes
-pi = draw_skill_prices(T=2, J=2, seed=seed)
+pi = draw_skill_prices(T=2, J=2, seed=seed, **kwargs)
 Dpi_1, Dpi_2 = (pi[:, 1] - pi[:, 0])
 
 # Define Loci and penalty terms that should be calculated
 loci = [(0.5, 0.5), (0.4, 0.6), (0.3, 0.7), (0.2, 0.8)]
-penalty_power = [1.25, 1.5, 2, 2.5, 3, 4]
+penalty_power = [1.25, 1.5, 2, 2.5, 3]
 
 # Define empty DataFrames that will carry the results of this program
 rslt = pd.DataFrame(index=penalty_power, columns=loci)
 rslt_difference = pd.DataFrame(index=penalty_power, columns=loci)
 count_corner_sol = pd.DataFrame(index=penalty_power, columns=loci)
-corr_lmb_bar_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
-corr_d_w_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
-corr_d_w_lmb_bar = pd.DataFrame(index=penalty_power, columns=loci)
+# corr_lmb_bar_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
+# corr_d_w_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
+# corr_d_w_lmb_bar = pd.DataFrame(index=penalty_power, columns=loci)
 task_adjustments = pd.DataFrame(index=penalty_power, columns=loci)
 
 # calculate true parameters for estimators
-baseline = (Dpi_2, (Dpi_1-Dpi_2))
-
+baseline = (Dpi_1, (Dpi_2-Dpi_1))
 
 # Simulate data and estimate for each combination of locus and penalty term
 for l in range(0, len(loci)):
     for p in range(0, len(penalty_power)):
         # Simulate data
         mc_data = mc_optimal_wage_choice(
-            n=1000,
+            n=100,
             T=2, J=2,
             penalty='quad',
-            p_weight=30,
+            p_weight=10,
             p_locus=loci[l],
             p_exponent=penalty_power[p],
-            seed=seed
+            seed=seed,
+            **kwargs
             )
 
         # count the number of cornersolutions
@@ -85,33 +93,34 @@ for l in range(0, len(loci)):
         D_lmb = np.array(mc_data.loc[idx[:, "lambda"], 1]
                          - mc_data.loc[idx[:, "lambda"], 0]).astype(float)
 
-        corr_lmb_bar_d_lmb.iloc[p, l] = np.corrcoef(lmb_bar, D_lmb).round(4)
-        corr_d_w_d_lmb.iloc[p, l] = np.corrcoef(np.array(wage_change
-                                                         ).astype(float),
-                                                D_lmb
-                                                ).round(4)
+        # As a quality check, take a look at correlation coefficients.
+        # corr_lmb_bar_d_lmb.iloc[p, l] = np.corrcoef(lmb_bar, D_lmb).round(4)
+        # corr_d_w_d_lmb.iloc[p, l] = np.corrcoef(np.array(wage_change
+        #                                                 ).astype(float),
+        #                                        D_lmb
+        #                                        ).round(4)
 
-        corr_d_w_lmb_bar.iloc[p, l] = np.corrcoef(np.array(wage_change
-                                                           ).astype(float),
-                                                  lmb_bar).round(4)
+        # corr_d_w_lmb_bar.iloc[p, l] = np.corrcoef(np.array(wage_change
+        #                                                   ).astype(float),
+        #                                          lmb_bar).round(4)
 
         # store task adjustments
         task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
+path="C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/OUT/"
 
-
+rslt_difference.to_json(
+                        path_or_buf=path+"rslt_difference.json",
+                        orient="index",
+                        )
+"""
+# Print results
 print("estimation coefficients: ", "\n",
-      rslt, "\n",
+      rslt.to_latex(columns=list(loci)), "\n",
       "deviation from true parameters: ", "\n",
-      rslt_difference, "\n",
-      "correlation between lmb_bar and D_lmb: ", "\n",
-      corr_lmb_bar_d_lmb, "\n",
-      "correlation between D_lmb and D_w", "\n",
-      corr_d_w_d_lmb, "\n",
-      "correlation between lmb_bar and D_w", "\n",
-      corr_d_w_lmb_bar, "\n",
+      rslt_difference.to_latex(columns=list(loci)), "\n",
       "mean task adjustments: ", "\n",
       task_adjustments, "\n",
+      "count corner colutions", "\n",
+      count_corner_sol,
       )
-#rslt_difference
-
-#count_corner_sol
+"""
