@@ -78,7 +78,8 @@ for m in range(0, M):
             # estimate price changes
             # 1. calculate approximated lambda
             lmb_bar = np.array((mc_data.loc[idx[:, "lambda"], 0]
-                               + mc_data.loc[idx[:, "lambda"], 1])/2).astype(float)
+                               + mc_data.loc[idx[:, "lambda"], 1])/2
+                               ).astype(float)
 
             # 2. get true wage difference
             wage_change = (mc_data.loc[idx[:, "wage"], 1]
@@ -114,7 +115,8 @@ for m in range(0, M):
             task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
     d = {m: rslt_difference.to_json()}
     rslt_dict.update(d)
-path="C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/OUT/"
+path = "C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/" \
+       "social_skill_prices/MC_simulation/OUT/"
 
 rslt_difference.to_json(
                         path_or_buf=path+"rslt_difference.json",
