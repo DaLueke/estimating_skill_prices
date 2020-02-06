@@ -1,11 +1,14 @@
+
+
 def mc_optimal_wage_choice(
         n, T, J, seed, penalty,
         p_weight=20,
         p_locus=[0.5, 0.5],
         p_exponent=2,
+        **kwargs
 ):
     '''
-    This script draws the simulated skills and skill prices around
+    This script draws the simulated skills and skill prices and
     returns the optimally chosen worktime shares, as well as resulting wages
     and utility. This is done for all time periods.
     Results are returned as multiindex-dataframe.
@@ -54,7 +57,7 @@ def mc_optimal_wage_choice(
 
     # Draw simulated skills and prices
     sim_skills = draw_skills(n=n, J=J, seed=seed)
-    sim_prices = draw_skill_prices(T=T, J=J, seed=seed)
+    sim_prices = draw_skill_prices(T=T, J=J, seed=seed, **kwargs)
 
     # Define individual wage as a function of worktime shares including a
     # standard normal dist. errorterm
