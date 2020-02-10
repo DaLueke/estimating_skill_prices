@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import statsmodels.regression.linear_model as sms
 import json
+import os
 
 # import functions from other modules
 from mc_optimal_wage_choice import mc_optimal_wage_choice
@@ -25,6 +26,9 @@ kwargs = {
           "pi_fun": "pi_fixed",
           "const": [0.05, 0.1]
           }
+
+# find current working directory.
+path = os.path.dirname(__file__)
 
 # calculate true price changes
 pi = draw_skill_prices(T=2, J=2, seed=seed, **kwargs)
@@ -115,26 +119,11 @@ for m in range(0, M):
             task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
     d = {m: rslt_difference.to_json()}
     rslt_dict.update(d)
-path = "C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/" \
-       "social_skill_prices/MC_simulation/OUT/"
 
-rslt_difference.to_json(
-                        path_or_buf=path+"rslt_difference.json",
-                        orient="index",
-                        )
-with open(path+"rslt_dict.json", "w") as json_file:
+# Write results to json file.
+# rslt_difference.to_json(
+#                         path_or_buf=path+"OUT\\rslt_difference.json",
+#                         orient="index",
+#                         )
+with open(path+"\\OUT\\rslt_dict.json", "w") as json_file:
     json.dump(rslt_dict, json_file)
-
-
-"""
-# Print results
-print("estimation coefficients: ", "\n",
-      rslt.to_latex(columns=list(loci)), "\n",
-      "deviation from true parameters: ", "\n",
-      rslt_difference.to_latex(columns=list(loci)), "\n",
-      "mean task adjustments: ", "\n",
-      task_adjustments, "\n",
-      "count corner colutions", "\n",
-      count_corner_sol,
-      )
-"""
