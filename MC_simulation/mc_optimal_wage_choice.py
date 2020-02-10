@@ -1,7 +1,7 @@
 
 
 def mc_optimal_wage_choice(
-        n, T, J, seed, penalty,
+        n, T, J, penalty,
         p_weight=20,
         p_locus=[0.5, 0.5],
         p_exponent=2,
@@ -56,8 +56,8 @@ def mc_optimal_wage_choice(
     from mc_prices import draw_skill_prices
 
     # Draw simulated skills and prices
-    sim_skills = draw_skills(n=n, J=J, seed=seed)
-    sim_prices = draw_skill_prices(T=T, J=J, seed=seed, **kwargs)
+    sim_skills = draw_skills(n=n, J=J)
+    sim_prices = draw_skill_prices(T=T, J=J, **kwargs)
 
     # Define individual wage as a function of worktime shares including a
     # standard normal dist. errorterm
