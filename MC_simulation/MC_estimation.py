@@ -15,9 +15,9 @@ from mc_prices import draw_skill_prices
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
 # Define indexer and parameters
-seed = 600      # set seed for Data Generating Process
-N = 100          # number of observations
-M = 10          # number of MC interations
+np.random.seed(600)     # set seed for Data Generating Process
+N = 100                 # number of observations
+M = 10                  # number of MC interations
 idx = pd.IndexSlice     # define Indexslice
 
 # Define optional arguments of DGP.
@@ -30,13 +30,15 @@ kwargs = {
 # find current working directory.
 path = os.path.dirname(__file__)
 
-# calculate true price changes
-pi = draw_skill_prices(T=2, J=2, seed=seed, **kwargs)
-Dpi_1, Dpi_2 = (pi[:, 1] - pi[:, 0])
-
 # Define Loci and penalty terms that should be calculated
 loci = [(0.5, 0.5), (0.4, 0.6), (0.3, 0.7), (0.2, 0.8)]
 penalty_power = [1.25, 1.5, 2, 2.5, 3]
+
+# draw price changes
+pi = draw_skill_prices(T=2, J=2, **kwargs)
+
+# calculate true price changes
+Dpi_1, Dpi_2 = (pi[:, 1] - pi[:, 0])
 
 # Define empty DataFrames that will carry the results of this program
 rslt = pd.DataFrame(index=penalty_power, columns=loci)
@@ -66,7 +68,7 @@ for m in range(0, M):
                 p_weight=10,
                 p_locus=loci[l],
                 p_exponent=penalty_power[p],
-                seed=seed,
+                # seed=seed,
                 **kwargs
                 )
 
