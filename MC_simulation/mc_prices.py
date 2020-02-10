@@ -1,7 +1,7 @@
 
 
 def draw_skill_prices(
-    T, J, seed,
+    T, J,
     pi_fun='pi_fixed',
     low=-0.2,
     high=0.2,
@@ -32,8 +32,8 @@ def draw_skill_prices(
     # import packages
     import numpy as np
 
-    # set seed
-    np.random.seed(seed)
+    # # set seed
+    # np.random.seed(seed)
 
     # define functions that return price changes for different specifications
     # (1) Draw stadard normal distributed changes in log prices.

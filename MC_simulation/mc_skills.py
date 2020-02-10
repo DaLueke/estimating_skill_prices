@@ -1,4 +1,9 @@
-def draw_skills(n, J, seed):
+
+
+def draw_skills(n,
+                J,
+                # seed
+                ):
     """ This script draws two correlated normal distributed skills and
     calculates their percentiles.
     Arguments:
@@ -17,8 +22,8 @@ def draw_skills(n, J, seed):
     # Import packages
     import numpy as np
 
-    # Set parameter
-    np.random.seed(seed)
+    # # Set parameter
+    # np.random.seed(seed)
 
     # For now, assume that skills are positively correlated
     skills_var = np.array([[3, 0.3], [0.3, 3]])
