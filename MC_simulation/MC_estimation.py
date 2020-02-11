@@ -17,7 +17,7 @@ pd.set_option('display.max_rows', None, 'display.max_columns', None)
 # Define indexer and parameters
 np.random.seed(600)     # set seed for Data Generating Process
 N = 100                 # number of observations
-M = 10                  # number of MC interations
+M = 100                  # number of MC interations
 idx = pd.IndexSlice     # define Indexslice
 
 # Define optional arguments of DGP.
@@ -43,8 +43,8 @@ Dpi_1, Dpi_2 = (pi[:, 1] - pi[:, 0])
 # Define empty DataFrames that will carry the results of this program
 rslt = pd.DataFrame(index=penalty_power, columns=loci)
 rslt_difference = pd.DataFrame(index=penalty_power, columns=loci)
-count_corner_sol = pd.DataFrame(index=penalty_power, columns=loci)
-task_adjustments = pd.DataFrame(index=penalty_power, columns=loci)
+# count_corner_sol = pd.DataFrame(index=penalty_power, columns=loci)
+# task_adjustments = pd.DataFrame(index=penalty_power, columns=loci)
 # corr_lmb_bar_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
 # corr_d_w_d_lmb = pd.DataFrame(index=penalty_power, columns=loci)
 # corr_d_w_lmb_bar = pd.DataFrame(index=penalty_power, columns=loci)
@@ -52,8 +52,10 @@ task_adjustments = pd.DataFrame(index=penalty_power, columns=loci)
 # calculate true parameters for estimators
 baseline = (Dpi_1, (Dpi_2-Dpi_1))
 
-# empty dict for Results
+# empty dicts for Results
+rslt_difference_dict = {}
 rslt_dict = {}
+
 
 # Run MC Simulation m times.
 for m in range(0, M):
@@ -72,14 +74,14 @@ for m in range(0, M):
                 **kwargs
                 )
 
-            # count the number of cornersolutions
-            corner_0 = sum(mc_data.loc[idx[:, "lambda"], 0] == 0) \
-                + sum(mc_data.loc[idx[:, "lambda"], 0] == 1)
-
-            corner_1 = sum(mc_data.loc[idx[:, "lambda"], 1] == 0) \
-                + sum(mc_data.loc[idx[:, "lambda"], 1] == 1)
-
-            count_corner_sol.iloc[p, l] = (corner_0, corner_1)
+            # # count the number of cornersolutions
+            # corner_0 = sum(mc_data.loc[idx[:, "lambda"], 0] == 0) \
+            #     + sum(mc_data.loc[idx[:, "lambda"], 0] == 1)
+            #
+            # corner_1 = sum(mc_data.loc[idx[:, "lambda"], 1] == 0) \
+            #     + sum(mc_data.loc[idx[:, "lambda"], 1] == 1)
+            #
+            # count_corner_sol.iloc[p, l] = (corner_0, corner_1)
 
             # estimate price changes
             # 1. calculate approximated lambda
@@ -118,14 +120,15 @@ for m in range(0, M):
             #                                          lmb_bar).round(4)
 
             # store task adjustments
-            task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
-    d = {m: rslt_difference.to_json()}
-    rslt_dict.update(d)
+            # task_adjustments.iloc[p, l] = np.mean(D_lmb).round(4)
 
-# Write results to json file.
-# rslt_difference.to_json(
-#                         path_or_buf=path+"OUT\\rslt_difference.json",
-#                         orient="index",
-#                         )
+    # Add results to dictionaries.
+    rslt_difference_dict.update({m: rslt_difference.to_json()})
+    rslt_dict.update({m: rslt.to_json()})
+
+# Write result-dictionaries to json files.
 with open(path+"\\OUT\\rslt_dict.json", "w") as json_file:
     json.dump(rslt_dict, json_file)
+
+with open(path+"\\OUT\\rslt_difference_dict.json", "w") as json_file:
+    json.dump(rslt_difference_dict, json_file)
