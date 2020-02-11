@@ -1,4 +1,4 @@
-""" Visualizes the simulated data.
+""" Visualizes the simulated data in histograms.
 Split in 2 parts: Part (1) visualizes data on the difference between estimated
 and true price changes. Part (2) - not yet implemented - will do the same for
 the estimated price changes (not in relation to true changes).
