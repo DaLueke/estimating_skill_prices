@@ -106,3 +106,6 @@ venv.bak/
 # Results and simulated data
 OUT/
 FIG/
+
+# Sandbox file
+Sandbox.py
