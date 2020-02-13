@@ -24,10 +24,18 @@ powers = df_mean_sd.index.get_level_values(level=1).unique()
 df = pd.DataFrame(columns=baselines, index=powers)
 for b in baselines:
     for p in powers:
-        # df.loc[p, b] = np.round(tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)], "Mean"]), 4)
-
-        mean = np.round(tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)], "Mean"]), 4)
-        sd = np.round(tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)], "STD"]), 4)
+        mean = np.round(
+                        tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)],
+                                             "Mean"
+                                             ]
+                              ),
+                        4
+                        )
+        sd = np.round(tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)],
+                                           "STD"
+                                           ]
+                            ),
+                      4)
         df.loc[p, b] = np.concatenate([mean, sd], axis=0)
 
 
