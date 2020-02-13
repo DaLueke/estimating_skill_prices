@@ -1,4 +1,4 @@
-def read_estimation_rslt(M=100):
+def read_estimation_rslt(M, file):
     """ Reads simluation data and reports it in hierarchical dataframe.
     Calculates mean and standard deviations for each combination of
     model parametes.
@@ -21,7 +21,10 @@ def read_estimation_rslt(M=100):
     path = os.path.dirname(__file__)
 
     # import data from MC Simulation
-    with open(path + "\\OUT\\rslt_dict.json") as data_file:
+    # with open(path + "\\OUT\\rslt_dict.json") as data_file:
+    #     data = json.load(data_file)
+
+    with open(path + "\\OUT\\" + file + ".json") as data_file:
         data = json.load(data_file)
 
     # Loop through all combinations of parameters of the model and receive
