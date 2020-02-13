@@ -3,7 +3,7 @@
 # import packages
 import pandas as pd
 import numpy as np
-import statsmodels.regression.linear_model as sms
+import statsmodels.api as sms
 import json
 import os
 
