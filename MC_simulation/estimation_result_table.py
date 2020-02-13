@@ -15,7 +15,12 @@ import pandas as pd
 
 # import other modules
 from read_estimation_rslt import read_estimation_rslt
-df_mc_est, df_mean_sd = read_estimation_rslt(M=100)
+
+# Define what Datafile to run on
+file = "rslt_difference_dict"
+# file = "rslt_dict"
+
+df, df_mean_sd = read_estimation_rslt(M=100, file=file)
 
 # Write data into
 baselines = df_mean_sd.index.get_level_values(level=0).unique()
