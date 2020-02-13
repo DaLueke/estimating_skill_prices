@@ -17,18 +17,19 @@ import pandas as pd
 from read_estimation_rslt import read_estimation_rslt
 
 # Define what Datafile to run on
-file = "rslt_difference_dict"
+file = "rslt_difference_dict_pw"
 # file = "rslt_dict"
 
-df, df_mean_sd = read_estimation_rslt(M=100, file=file)
+df, df_mean_sd = read_estimation_rslt(M=10, file=file)
 
-# Write data into
+# Write data into dataframe.
+# Initialize dataframe.
 baselines = df_mean_sd.index.get_level_values(level=0).unique()
-powers = df_mean_sd.index.get_level_values(level=1).unique()
+penalty = df_mean_sd.index.get_level_values(level=1).unique()
 
-df = pd.DataFrame(columns=baselines, index=powers)
+df = pd.DataFrame(columns=baselines, index=penalty)
 for b in baselines:
-    for p in powers:
+    for p in penalty:
         mean = np.round(
                         tuple(df_mean_sd.loc[pd.IndexSlice[str(b), str(p)],
                                              "Mean"
@@ -43,8 +44,13 @@ for b in baselines:
                       4)
         df.loc[p, b] = np.concatenate([mean, sd], axis=0)
 
+# Style and format for each individual table
+if file[-2:] == "pp":
+    df.index.name = "Penalty Powers"
+    df.columns.name = "Baseline Interval"
 
-df.index.name = "Penalty Powers"
-df.columns.name = "Baseline Interval"
+if file[-2:] == "pw":
+    df.index.name = "Penalty Weights"
+    df.columns.name = "Baseline Interval"
 
 print(df.to_latex())
