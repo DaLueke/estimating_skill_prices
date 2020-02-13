@@ -18,7 +18,11 @@ from read_estimation_rslt import read_estimation_rslt
 file = "rslt_difference_dict"
 # file = "rslt_dict"
 
-df, df_mean_sd = read_estimation_rslt(M=100, file=file)
+# Define which parameter setting to run on
+# file += "_pp"
+file += "_pw"
+
+df, df_mean_sd = read_estimation_rslt(M=10, file=file)
 
 # Get indices from simluated data.
 cols = df.index.get_level_values(level=0).unique()
