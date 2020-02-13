@@ -5,6 +5,7 @@ the estimated price changes (not in relation to true changes).
 """
 
 # import packages
+# import matplotlib as plt
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,7 +13,12 @@ import os
 
 # import other modules
 from read_estimation_rslt import read_estimation_rslt
-df, df_mean_sd = read_estimation_rslt(M=100)
+
+# Define what Datafile to run on
+file = "rslt_difference_dict"
+# file = "rslt_dict"
+
+df, df_mean_sd = read_estimation_rslt(M=100, file=file)
 
 # Get indices from simluated data.
 cols = df.index.get_level_values(level=0).unique()
@@ -55,7 +61,7 @@ for n_c, c in enumerate(cols):
 # Set layout and print plot to file.
 fig.tight_layout()
 path = os.getcwd()      # debugging
-fig.savefig(fname=path + "\\FIG\\estimation_differences.png")
+fig.savefig(fname=path + "\\FIG\\" + file + ".png")
 
 """
 # (2) plots for estimated values
