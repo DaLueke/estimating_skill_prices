@@ -1,0 +1,218 @@
+\documentclass{article}
+\usepackage{amsmath} 											% formulas
+\usepackage[bibstyle=authoryear,citestyle=authoryear]{biblatex} % citing and references style
+\usepackage{booktabs}											% tables
+\usepackage[left=3cm, top=2cm, right=2cm, bottom=2cm]{geometry} % spacing and edges
+\usepackage{graphicx} 											% allows integration of images (.png files)
+
+%\usepackage{array}
+%\usepackage{makecell}
+%\usepackage{arydshln}
+%\renewcommand\theadalign{bc}
+%\renewcommand\theadfont{\bfseries}
+%\renewcommand\theadgape{\Gape[4pt]}
+%\renewcommand\cellgape{\Gape[4pt]}
+
+\newcommand\B{\rule[-1.5ex]{0pt}{0pt}}							% vertical spacing in tables
+
+\DeclareMathOperator*{\argmin}{arg\,min}						% argmin operant
+
+\bibliography{../references}
+
+\title{Description of the Simulation Method}
+\author{Daniel Lüke}
+
+\begin{document}\maketitle
+
+	This document describes the MC simulation that I implemented as part of my master's thesis. First, I will provide an overview of the theoretical framework that is the foundation of these simulations. In section 2 I sketch how an estimable version of this model results in an approximation error. After that, I describe the single steps conducted as part of this simulation, laying out the modeling assumptions made in each step in section 3. Finally, in section 4, I present the (biased) estimation results that are produced by the simulation and how these results change due to choice of the parameterization.\\
+
+\section{Modeling Task Choice}
+	At a starting point, let me briefly lay out the model that my simulations are based on.
+	\begin{itemize}
+		\item{In each period $t$, all agents $i$ maximize their utility $u_{i,t}$ by choosing the fraction of their work-time ($\lambda_{1,t}$ and $\lambda_{2,t}$) spent on each of two different tasks.}
+		\item{Agents have no outside option from working on these tasks: $\lambda_{1,t} + \lambda_{2,t}=1$. Therefore, work-time is expressed in terms of $\lambda_{2,t} \equiv \lambda_t$ in the following.}
+		\item{Agents dislike strong specialization and experience a penalty (dis-utility) from it.}
+		\item{The agents' choice problem can be stated as follows.}
+
+		\begin{equation} \label{eq:utility}
+		\lambda^* \equiv \argmin_\lambda u_{i,t} = (1-\lambda_t) w_{1, i, t} + \lambda_t w_{2, i, t} - \tau (|b_i - \lambda|)^p
+		\end{equation}
+
+		\item{While the first two summands represent the wage any agent receives, the third part depicts the penalty term. It's parameters are defined as follows:}
+			\begin{itemize}
+				\item{$\tau$: Penalty weight. Chosen so that the penalty is high enough to prevent corner solutions.}
+				\item{$b_i$: Individual's 'baseline decision'. Determines the minimum of the penalty term of each agent and can be understood as exogenous relative task preference. By above stated assumption of dis-utility from specialization, $b_i$ should be in the region of $0.5$}
+				\item{$p$: Power of the penalty term: Defines how heavily deviations from $b_i$ are punished.}	
+			\end{itemize}
+
+		\item{Solving the maximization problem results in following optimal task choice $\lambda_t$ as a function of relative task specific wages and penalty parameters:\footnote{Note that this equation is not defined for uneven $p$ and $w_{1,t} < w_{2,t}$. I remedy this restriction by using a optimization algorithm that is based on Sequential Least Squares Programming. This representation of the optimal choice parameter, therefore, can only serve to give an economic intuition. However, it does not present the actual solution to the choice problem.}:}
+
+		\begin{equation} \label{eq:lmb_opt}
+		\lambda^*_t = b_i - (\frac{w_{2, t} - w_{1, t}}{p \tau})^{\frac{1}{p-1}}
+		\end{equation}
+	\end{itemize}
+
+\section{Estimation of Changes in Skill Prices}
+	\begin{itemize}
+		\item{Potential task specific wages (expressed in logs), $w_{i, j, t}$ are assumed to equal the sum of an individual's task specific (log) skills $s_{i,j}$ and task specific task prices $\pi_{j,t}$:}
+		\begin{equation} \label{eq:wage_eq}
+		w_{i,j,t} = s_{i,j} + \pi_{j,t} \:, \:  j \in \{1, 2\}
+		\end{equation}
+		\item{In equation (\ref{eq:wage_eq}), two assumptions are made implicitly. First, task specific individual skills do not depend on time. At this early stage, I abstract from skill accumulation and assume skills to be constant over time. Second, all individuals face the same task specific prices, which may change between time periods.}
+		\item{In order to estimate changes in skill prices over discrete changes in time, I arrive at the following estimable equation for changes in skill prices:}
+		\begin{equation}
+		\Delta w = \Delta \pi_{j=2} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi}
+		\end{equation}
+		\item{Here, $\Delta$ indicates the change in a value from period $t=1$ to $t=2$. E.g., $\Delta w \equiv w_{t=2} - w_{t=1}$. The tilde indicates task-relative values, i.e., $\tilde{\pi_t} \equiv \pi_{j=2, t} - \pi_{j=1, t}$.}
+		\item{This approximation results in an error causing estimation results to be biased. The true change in wages can be shown to be the following, where $\tilde{s_1}$ denotes the relative skills in period 1, i.e., $\tilde{s}_1 \equiv s_{j=2, t=1} - s_{j=1, t=1}$.}
+		\begin{equation}
+		\Delta w = \Delta \pi_{j=2} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi} + \Delta \lambda (\frac{\tilde{\pi}_1 + \tilde{\pi}_2}{2} + \tilde{s}_1)
+		\end{equation}
+
+		\begin{itemize}
+			\item{This approximation error term results in larger wage gains for individuals who:}
+			\begin{itemize}
+				\item[(1)]{Make larger adjustments towards task two between two periods, i.e., have large $\Delta \lambda$.}
+				\item[(2)]{Have high relative skill in task two, i.e., have high $\tilde{s}_1$.}
+			\end{itemize}
+			\item[]{and vice versa.}
+		\end{itemize}
+		%TODO: Add interpretation of the bias term here!
+	\end{itemize}
+
+\section[Simulation of Wage Changes]{Simulation of Wage Changes\footnote{A closer documentation of the code used for this simulation can be found in appendix \ref{code_docu} of this document.} }
+	\begin{itemize}
+		\item{I simulate task specific skills in accordance to above stated assumptions: Skills do not change between periods. Thus, I draw skills from a multivariate normal distribution and keep them fixed for each agent. Means are assumed to be (5, 5) with a variance of 3 and a covariance of 0.3. Means as well as variance-covariance-matrix are model parameters that can be varied freely.}
+		\item{Prices are assumed to change between periods. I assume that this change is deterministic and that growth rates are $(\Delta \pi_{j=1}, \Delta \pi_{j=2})=(0.05, 0.1)$. Starting values for these task specific skill prices are $(\pi_{j=1, t=0}, \pi_{j=2, t=0})=(5, 6)$.}
+		\item{In each period, agents choose their work-time share $\lambda_{i,t}$ according to the optimization problem stated in equation (\ref{eq:lmb_opt}) above.}
+		\item{Therefore, wage changes are exogenous in task specific skills and prices in this simulation.}
+		\item{As part of a Monte Carlo Simulation, this simulation of wage changes is repeated $M$ times, where $M$ can be chosen freely.}
+	\end{itemize}
+
+
+\section{Results from changing the penalty term's specification}
+	This section presents estimation results for a set of different specifications of the utility function, more precisely, the penalty term. This allows to get a better understanding of the approximation error as well as developing a strategy to limit its impact on the estimation results. For the sake of clarity, in each step I vary only two of the three model parameters: penalty weight $\tau$, the exponent of the penalty term, $p$, and the interval from which the baseline task choice is randomly drawn, $b_i$. This section is divided in three subsection. Each of which discusses the consequences of changing one of these parameters. \\
+	For the first set of specifications, $b_i$ and $p$ are varied while $\tau$ is kept constant at a value of 30. The second set of specifications varies $b_i$ and $\tau$ while $p$ is held constant at a value of 2. \\ %TODO: Set \tau = 30 or 35 in both specifications -> see that results are the same!
+	\subsection{Changing the range of baseline choices}
+		\begin{itemize}
+			\item{Agent's are assumed to have exogenous preferences for a specific split in work-time. This split is drawn from a uniform distribution over some interval.}
+			\item{The columns of table (\ref{tab:est_rslt_differences_pp}) give the tuples of lower and upper border of this interval. For example, column name $(0.4, 0.6)$ can be interpreted as follows. For each agent $i$, the individual baseline task split $b_i$ is uniformly distributed in $b_i \sim U(0.4, 0.6)$}.
+			\item{Allowing for differences in $b_i$ shifts the optimally chosen $\lambda$ for each agent towards her $b_i$.}
+			\item{Differences in $b_i$ do not impact $\Delta \lambda$ (the factor of the approximation error term). This can be seen from \ref{eq:lmb_opt}: for a fixed agent $i$, changes in $\lambda$ between periods do not depend on $b_i$.}
+			\item{While the difference in $\lambda$ between periods is not affected, the level of $\lambda$ is. Thus, introducing differences in $b_i$ leads to changes in $\frac{\lambda_1+\lambda_2}{2}$. This lowers the correlation between $\Delta \lambda$ and $\frac{\lambda_1+\lambda_2}{2}$ and thereby leads to lower biases in estimators.}
+		\end{itemize}
+	\subsection{Changing the exponent of the penalty term}
+		\begin{itemize}
+			\item{By definition of the penalty term $|b_i - \lambda| < 1$. Larger exponents of the penalty term $p$, thus, result in lower penalties from deviations.}
+			\item{Setting $p$ to small values, i.e., $ p \in (1, 2)$ results in larger penalties from deviation from baseline split $b_i$. Hence, for such a specification agents will adjust their task choice relatively little. Therefore, smaller values for $\Delta \lambda$ are to be expected. This decreases the approximation error term.}
+			\item{As seen from \ref{tab:est_rslt_differences_pp}, lowering the exponent of the penalty term results in overall smaller deviations of estimated price changes from true price changes.}
+			\item{The case of $b_i = 0.5 \forall i \in N$ is an exception from this result as a heavy penalty for deviations paired with the same baseline decision for all agents results in $\lambda^* = 0.5$ for all agents. In this case, the regressor ($\frac{\lambda_1+\lambda_2}{2}$) takes constant value and is perfectly collinear with the constant.}
+		\end{itemize}
+
+		\begin{table}
+		\begin{tabular}{lllll}
+		\toprule
+		Power of penalty 	& \multicolumn{4}{c}{Interval of baseline choice $(\underbar{b}, \bar{b})$}						\\
+		term $p$			&						&						&						&						\\				
+		\cmidrule{2-5}
+						  	&  (0.5, 0.5)			&  (0.4, 0.6)			&  (0.3, 0.7)			&  (0.2, 0.8)			\\
+		\midrule										
+		1.25				&  -0.1128, 0.2255		&  -0.0, 0.0001			&  0.0, 0.0				&  0.0, 0.0				\\ \B
+					      	&  (0.0777, 0.1555)		&  (0.0001, 0.0001)		&  (0.0, 0.0)			&  (0.0, 0.0)			\\
+		1.5					&  -0.0505, 0.1009		&  -0.0002, 0.0009		&  0.0002, -0.0			&  0.0001, 0.0003		\\ \B
+						  	&  (0.0022, 0.0043)		&  (0.0004, 0.0007)		&  (0.0002, 0.0004)		&  (0.0002, 0.0005)		\\
+		2.0					&  -0.0248, 0.0497		&  -0.0071, 0.0154		&  -0.0018, 0.005		&  -0.0002, 0.0023		\\ \B
+						  	&  (0.0002, 0.0003)		&  (0.001, 0.0018)		&  (0.0004, 0.0007)		&  (0.0006, 0.0012)		\\
+		2.5					&  -0.0167, 0.0333		&  -0.0115, 0.0236		&  -0.0055, 0.0125		&  -0.0024, 0.007		\\ \B
+						 	&  (0.0001, 0.0002)		&  (0.0007, 0.0009)		&  (0.0008, 0.0012)		&  (0.0006, 0.0011)		\\
+		3.0					&  -0.0125, 0.025		&  -0.0105, 0.0214		&  -0.0069, 0.015		&  -0.0034, 0.009		\\ \B
+						  	&  (0.0001, 0.0001)		&  (0.0004, 0.0007)		&  (0.0006, 0.0009)		&  (0.0004, 0.0007)		\\
+		\bottomrule
+
+		\end{tabular}
+		\caption{Deviation of the estimation results from the respective true price changes. The first value in each cell relates to the estimation error of the price change in task $j=2$. The Second value to the estimation error of the relative price change between tasks $j=2$ and $j=1$: $(\Delta \hat{\pi}_{j=2} - \Delta \pi_{j=2},  \Delta \hat{\tilde{\pi}} - \Delta \tilde{\pi})$. Calculated for different specifications of the penalty term with respect to baseline decisions and the exponent of the penalty term. Provides the mean estimation error for $M = 100$ Monte Carlo simulations. Standard deviations are provided in brackets. Number of observations is $N = 100$, penalty weight $\tau$ is fixed at 30.}
+		\label{tab:est_rslt_differences_pp}
+		\end{table}
+
+	\subsection{Changing the weight of the penalty term}
+		\begin{itemize}
+			\item{The penalty weight is a multiplier of the penalty term. Higher values of $\tau$, therefore, result in higher dis-utility from deviation from $b_i$ for all agents and, finally, in smaller adjustments to reflect changes in task prices.}
+			\item{A very large value for $\tau$ will result in constant task choices $\lambda_i$ between periods. This eliminates the approximation error term. As presented in table (\ref{tab:est_rslt_differences_pw}), the mean estimation error generally decreases in $\tau$. Again, an exception is the special case of $b_i = 0.5 \forall i \in N$ where the argument remains the same as before: constant $b_i$ paired with high penalties results in perfect collinearity of the regressor and the constant.}
+		\end{itemize}
+
+		\begin{table}
+		\begin{tabular}{lllll}
+		\toprule
+		Weight of the 		& \multicolumn{4}{c}{Interval of baseline choice $(\underbar{b}, \bar{b})$}						\\
+		penalty term $\tau$	&						&						&						&						\\				
+		\cmidrule{2-5}
+						  	&  (0.5, 0.5)			&  (0.4, 0.6)			&  (0.3, 0.7)			&  (0.2, 0.8)			\\
+		\midrule										
+		5					&  -0.0199, 0.0401		&  -0.0186, 0.0378		&  -0.0131, 0.0279		&  -0.0082, 0.0193		\\ \B
+					      	&  (0.0015, 0.0025)		&  (0.0021, 0.0037)		&  (0.0015, 0.0033)		&  (0.002, 0.0029)		\\
+		20					&  -0.0251, 0.0502		&  -0.0118, 0.0253		&  -0.0044, 0.0107		&  -0.0013, 0.0049		\\ \B
+						  	&  (0.0001, 0.0003)		&  (0.0009, 0.0017)		&  (0.0007, 0.0015)		&  (0.0007, 0.0014)		\\
+		35					&  -0.025, 0.05			&  -0.0056, 0.0124		&  -0.0012, 0.0039		&  0.0001, 0.0014		\\ \B
+						  	&  (0.0002, 0.0004)		&  (0.0011, 0.002)		&  (0.0006, 0.0011)		&  (0.0004, 0.0009)		\\
+		50					&  -0.025, 0.0501		&  -0.003, 0.0069		&  -0.0005, 0.002		&  0.0001, 0.0008		\\ \B
+						 	&  (0.0001, 0.0002)		&  (0.0005, 0.0011)		&  (0.0006, 0.0011)		&  (0.0004, 0.0007)		\\
+		\bottomrule
+
+		\end{tabular}
+		\caption{Deviation of the estimation results from the respective true price changes. The first value in each cell relates to the estimation error of the price change in task $j=2$. The Second value to the estimation error of the relative price change between tasks $j=2$ and $j=1$: $(\Delta \hat{\pi}_{j=2} - \Delta \pi_{j=2},  \Delta \hat{\tilde{\pi}} - \Delta \tilde{\pi})$. Calculated for different specifications of the penalty term with respect to baseline decisions and the weight of the penalty term. Provides the mean estimation error for $M = 100$ Monte Carlo simulations. Standard deviations are provided in brackets. Number of observations is $N = 100$, the exponent of the penalty term is fixed at 2.}
+		\label{tab:est_rslt_differences_pw}
+		\end{table}
+
+\newpage
+\begin{appendix}
+\section{Code Documentation --- outdated ---} \label{code_docu} %TODO Rework this chapter: Wording, add other modules, rework referencing!
+	\begin{itemize}
+		\item{Drawing task specific skills, file "mc\_skills.py"}
+		\begin{itemize}
+			\item{By the assumption stated in previous section, there is no change in skills between time periods. Therefore, skills are drawn once and kept fixed for each agent.}
+			\item{I draw each agent's skills from a multivariate random normal distribution with means $(5, 5)$ and a variance of 3. For now, skills can be defined to correlate by adjusting the variance-covariance matrix accordingly.}
+		\end{itemize}
+		\item{Drawing task specific skill prices, file "mc\_prices.py"}
+		\begin{itemize}
+			\item{I assume prices to change exogenously between periods. Changes are drawn from a uniform distribution over the interval $[-0.2, 0.2]$.}
+			\item{Starting values for task specific skill prices are $(\pi_{j=1, t=0}, \pi_{j=2, t=0})=(5, 6)$.}
+		\end{itemize}
+		\item{Simulating optimal task choice, file "mc\_optimal\_wage\_choice.py"}
+		\begin{itemize}
+			\item{Using the previously generated task specific skills and task specific skill prices, I calculate each agent's utility according to the utility function defined in equation (\ref{eq:utility}).}
+			\item{For this, each agent's baseline decision of her work-time split, $b_i$, is randomly drawn here. It is assumed to be uniform distributed within some borders that can be passed through the "p\_locus" argument.}
+			\item{Both, the penalty weight $\tau$, as well as the exponent of the penalty term $p$ can be passed as arguments to this function.}
+			\item{Provided these arguments of the penalty term as well as potential task specific wages for each period, I calculate the utility-maximizing work-time share $\lambda$ for each period.}
+			\item{Finally, this file returns a table that provides the optimally chosen $\lambda$, resulting wage and resulting utility for each agent $i$ (rows) and each period $t$ (columns).}
+		\end{itemize}
+		\item{Calculating estimation results, file "mc\_estimation.py"}
+		\begin{itemize}
+			\item{In this last step I calculate the estimation results for set of combinations of boundaries for baseline work-time splits $b_i$ and the penalty term's exponent $p$.}
+			\item{The results of this exercise can be seen in \ref{tab:est_rslt_differences_pp} where I calculated the difference between the estimated parameters and their true values.}
+		\end{itemize}
+	\end{itemize}
+\section{Distribution of mean estimation errors}
+\begin{figure}[ht]
+\centering
+	\includegraphics[angle=-90, scale=0.4]{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/FIG/rslt_difference_dict_pp.png}
+	\caption{Distribution of mean estimation error for M=50 Monte Carlo simulations. \textbf{Power of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
+\end{figure}
+
+\begin{figure}[ht]
+	\includegraphics[angle=-90, scale=0.4]{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/FIG/rslt_difference_dict_pw.png}
+	\caption{Distribution of mean estimation error for M=50 Monte Carlo simulations. \textbf{Weight of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
+\end{figure}
+\end{appendix}
+
+
+
+
+%
+%		\item{For the penalty term, several different specifications are currently implemented:}
+%		\begin{itemize}
+%		\item{In the current version, penalty weight $\tau$ is set to 30. A value that is small enough to allow agents to deviate from their baseline split of work-time and large enough to prevent corner solutions.}
+%		\item{Penalty power $p$ takes following range of values: }
+%		\end{itemize}
+
+\printbibliography
+\end{document}
