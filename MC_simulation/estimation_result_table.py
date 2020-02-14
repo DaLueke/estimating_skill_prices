@@ -2,7 +2,7 @@
 differences between estimated price change and true price change over all MC
 simulations as well as according standard deviations.
 (1) Presents cominations of baseline decisions b and penalty exponent p for a
-fixed penalty weight tau.
+fixed penalty weight tau = 30.
 (2) Presents combinations of baseline decisions b and pealty weights tau for a
 fixed penalty exponent of p = 2.
 """
@@ -44,7 +44,7 @@ for b in baselines:
                       4)
         df.loc[p, b] = np.concatenate([mean, sd], axis=0)
 
-# Style and format for each individual table
+# Style and format for each choice of parameters.
 if file[-2:] == "pp":
     df.index.name = "Penalty Powers"
     df.columns.name = "Baseline Interval"

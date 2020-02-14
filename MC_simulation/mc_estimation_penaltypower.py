@@ -35,7 +35,7 @@ pd.set_option('display.max_rows', None, 'display.max_columns', None)
 # Define indexer and parameters
 np.random.seed(600)     # set seed for Data Generating Process
 N = 100                 # number of observations
-M = 10                  # number of MC interations
+M = 50                  # number of MC interations
 idx = pd.IndexSlice     # define Indexslice
 
 # Define optional arguments of DGP.
