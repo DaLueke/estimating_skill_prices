@@ -24,7 +24,8 @@
 
 \begin{document}\maketitle
 
-	This document describes the MC simulation that I implemented as part of my master's thesis. First, I will provide an overview of the theoretical framework that is the foundation of these simulations. In section 2 I sketch how an estimable version of this model results in an approximation error. After that, I describe the single steps conducted as part of this simulation, laying out the modeling assumptions made in each step in section 3. Finally, in section 4, I present the (biased) estimation results that are produced by the simulation and how these results change due to choice of the parameterization.\\
+	This document describes the MC simulation that I implemented as part of my master's thesis. First, I will provide an overview of the theoretical framework that is the foundation of these simulations. In section 2 I sketch how an estimable version of this model results in an approximation error. After that, in section 3 I describe the wage simulation process, laying out the model parameters I choose. Finally, in section 4, I present the (biased) estimation results that are produced by the simulation and how these results change due to choice of the parameterization.\\
+
 
 \section{Modeling Task Choice}
 	At a starting point, let me briefly lay out the model that my simulations are based on.
@@ -32,55 +33,134 @@
 		\item{In each period $t$, all agents $i$ maximize their utility $u_{i,t}$ by choosing the fraction of their work-time ($\lambda_{1,t}$ and $\lambda_{2,t}$) spent on each of two different tasks.}
 		\item{Agents have no outside option from working on these tasks: $\lambda_{1,t} + \lambda_{2,t}=1$. Therefore, work-time is expressed in terms of $\lambda_{2,t} \equiv \lambda_t$ in the following.}
 		\item{Agents dislike strong specialization and experience a penalty (dis-utility) from it.}
+		\item{This penalty can be expressed as a function $p(\tau, \lambda, b_i, \phi)$ presented in equation \ref{eq:penalty} below.}
+		
+		% \begin{equation}\label{eq:penalty}
+		% p(\tau, \lambda_i, b_i, \phi) = \left\{
+		% 	 \begin{array}{ll}
+		% 	 \tau (|b_i - \lambda_{i, t}|)^\phi, \: \text{s.t.} \: \phi \geq 1 &  \text{if $b_i \neq \lambda_{i, t}$}\\
+		% 	 0, & \text{if $b_i = \lambda_{i, t}$}
+		% 	 \end{array}
+		% \right.
+		% \end{equation}
+
+		\begin{equation}\label{eq:penalty}
+		p(\tau, \lambda_i, b_i, \phi) = 
+			 \tau (|b_i - \lambda_{i, t}|)^\phi   % , \: \text{with} \: \phi \geq 1 \: \text{and} \: b_i, \lambda_{i, t} \in [0, 1], b_i \neq \lambda_{i, t}}}
+		\end{equation}
+
+		\item{Parameters of this penalty function:}
+
+		\begin{itemize}	
+			\item{$\tau$ - Penalty weight: Scales the penalty term. Impacts the extent agents deviate from their baseline task choice. High values reduce the impact of differences in potential wages on task choice. Low values allow for larger deviations from the baseline choices, increases the chance for corner solutions thereby. Assumed to be time-invariant and identical for all individuals.}
+			\item{$b_i$ - Baseline task choice of a worker: This is the preferred task choice of a worker and marks the minimum of the penalty term. Assumed to be time-invariant and identical for all individuals.}
+			\item{$\lambda_{i, t}$ - Endogenously determined task choice of a worker. Depends on each individual's potential wages in each period.}
+			\item{$\phi$ - Penalty exponent: Scales penalty term. Since the base of this exponent by construction lies in $|b_i - \lambda_{i, t}| \in [0, 1]$, a larger exponent $\phi$ decreases penalties from deviations. $\phi$ needs to be lager than $1$ in order to ensure continuity of the first order condition (see section \ref{sec:FOC} below). $\phi$ is assumed to be time-invariant and identical for all individuals, too.} 
+		\end{itemize}
+
+		\item{Using the absolute value function in the penalty term comes at the costs of non-differentiability at $b_i = \lambda_{i, t}$. I will discuss this matter in section \ref{sec:FOC} below.}
+		\item{Each agents utility $u_{i, t}$ is assumed to be her wage lessened by the penalty term.}
+
+		\begin{equation}
+			u_{i, t}(b_i, \lambda_{i, t}, \phi, \tau) = (1-\lambda_{i, t}) w_{1, i, t} + \lambda_{i, t} w_{2, i, t} - p(\tau, \lambda_{i, t}, b_i, \phi)
+		\end{equation}
 		\item{The agents' choice problem can be stated as follows.}
 
-		\begin{equation} \label{eq:utility}
-		\lambda^* \equiv \argmin_\lambda u_{i,t} = (1-\lambda_t) w_{1, i, t} + \lambda_t w_{2, i, t} - \tau (|b_i - \lambda|)^p
+		\begin{equation} \label{eq:optimization_problem}
+		\lambda^*_{i, t} \equiv \argmin_{\lambda_{i, t}} u_{i,t}(b_i, \lambda_{i, t}, \phi, \tau)
 		\end{equation}
 
-		\item{While the first two summands represent the wage any agent receives, the third part depicts the penalty term. It's parameters are defined as follows:}
-			\begin{itemize}
-				\item{$\tau$: Penalty weight. Chosen so that the penalty is high enough to prevent corner solutions.}
-				\item{$b_i$: Individual's 'baseline decision'. Determines the minimum of the penalty term of each agent and can be understood as exogenous relative task preference. By above stated assumption of dis-utility from specialization, $b_i$ should be in the region of $0.5$}
-				\item{$p$: Power of the penalty term: Defines how heavily deviations from $b_i$ are punished.}	
-			\end{itemize}
-
-		\item{Solving the maximization problem results in following optimal task choice $\lambda_t$ as a function of relative task specific wages and penalty parameters:\footnote{Note that this equation is not defined for uneven $p$ and $w_{1,t} < w_{2,t}$. I remedy this restriction by using a optimization algorithm that is based on Sequential Least Squares Programming. This representation of the optimal choice parameter, therefore, can only serve to give an economic intuition. However, it does not present the actual solution to the choice problem.}:}
-
-		\begin{equation} \label{eq:lmb_opt}
-		\lambda^*_t = b_i - (\frac{w_{2, t} - w_{1, t}}{p \tau})^{\frac{1}{p-1}}
-		\end{equation}
 	\end{itemize}
 
+
+\subsection{Finding optimal task choices}\label{sec:FOC}
+
+		\begin{itemize}
+			\item{In order to find the optimal task choice $\lambda^*_{i, t}$, following first order condition needs to be satisfied.}
+
+			\begin{equation}
+				\frac{\partial u_{i,t}(b_i, \lambda, \phi, \tau)}{\partial \lambda} \overset{!}{=} 0
+			\end{equation}
+			\item[]{where the partial derivative of the utility function w.r.t. $\lambda_{i,t}$ can be shown to be as follows.}
+
+			% \begin{equation}\label{eq:FOC}
+			% 	\frac{\partial u_{i,t}(b_i, \lambda, \phi, \tau)}{\partial \lambda}
+			% 	\left\{
+			% 	\begin{array}{ll}
+			% 		\tilde{w} - \phi \tau \frac{(|b_i - \lambda|)^\phi}{b_i - \lambda}, \: & \: \text{if $b_i \neq \lambda$} \\
+			% 		0, \: & \: \text{if $b_i = \lambda$}
+			% 	\end{array}
+			% 	\right.
+			% \end{equation}
+
+			\begin{equation}\label{eq:FOC}
+				\frac{\partial u_{i,t}(b_i, \lambda_{i,t}, \phi, \tau)}{\partial \lambda_{i,t}} = \tilde{w} - \phi \tau \frac{(|b_i - \lambda_{i,t}|)^\phi}{b_i - \lambda_{i,t}}, \: \text{for $b_i \neq \lambda_{i,t}$}
+			\end{equation}
+			\item{Where $\tilde{w}$ denotes the relative potential wage, i.e., $\tilde{w} \equiv w_2 - w_1$.}
+			\item{From equation \ref{eq:FOC} one can see that this first order condition is not defined at $b_i = \lambda_{i,t}$.}
+			\item{Starting from equation \ref{eq:FOC} it can be shown that the optimal task choice results as follows. A derivation of this result can be found in appendix \ref{appen:lambda_opt}}
+
+			\begin{equation} \label{eq:lmb_opt}
+				\lambda^*_{i,t} = \left\{
+				\begin{array}{ll}
+					b_i - (\frac{- \tilde{w}}{\phi \tau})^{\frac{1}{\phi -1}}, \: & \: \text{if $b_i > \lambda_{i,t}$}\\
+					b_i - (\frac{\tilde{w}}{\phi \tau})^{\frac{1}{\phi - 1}}, \: & \: \text{if $b_i < \lambda_{i,t}$}
+				\end{array}
+			\right.
+			\end{equation}
+
+			\item{Note that $\tilde{w}$ takes values smaller $0$, if and only if the potential wage in task $2$ is smaller then the potential wage in task $1$. This case is accompanied by a shift in task choices towards task $1$, which will result in $b_i \geq \lambda_i$. The exponent in equation (above), therefore, is by construction always over a strictly positive base and thereby defined for any real number of $\tilde{w}$. Analogously, it can be seen that $\tilde{w} > 0 \iff b_i < \lambda_{i,t}$.}
+
+			% TODO: is this actually iff? Is this actually true for strict inequalities?
+
+
+		\end{itemize}
+
 \section{Estimation of Changes in Skill Prices}
+
 	\begin{itemize}
 		\item{Potential task specific wages (expressed in logs), $w_{i, j, t}$ are assumed to equal the sum of an individual's task specific (log) skills $s_{i,j}$ and task specific task prices $\pi_{j,t}$:}
-		\begin{equation} \label{eq:wage_eq}
+
+		\begin{equation} \label{eq:pot_wage_equation}
 		w_{i,j,t} = s_{i,j} + \pi_{j,t} \:, \:  j \in \{1, 2\}
 		\end{equation}
-		\item{In equation (\ref{eq:wage_eq}), two assumptions are made implicitly. First, task specific individual skills do not depend on time. At this early stage, I abstract from skill accumulation and assume skills to be constant over time. Second, all individuals face the same task specific prices, which may change between time periods.}
-		\item{In order to estimate changes in skill prices over discrete changes in time, I arrive at the following estimable equation for changes in skill prices:}
+
+		\item{In equation (\ref{eq:pot_wage_equation}), two assumptions are made implicitly. First, task specific individual skills do not depend on time. At this early stage, I abstract from skill accumulation and assume skills to be constant over time. Second, all individuals face the same task specific prices, which may change between time periods.}
+		\item{The total wage any worker receives results as the sum of potential wages, each weighted by the time fraction the worker choses to spend on the particular task.}
+
 		\begin{equation}
-		\Delta w = \Delta \pi_{j=2} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi}
+			w_{i,t} = (1- \lambda_{i,t}) w_{i, j=1, t} + \lambda_{i,t} w_{i, j=2, t}
 		\end{equation}
-		\item{Here, $\Delta$ indicates the change in a value from period $t=1$ to $t=2$. E.g., $\Delta w \equiv w_{t=2} - w_{t=1}$. The tilde indicates task-relative values, i.e., $\tilde{\pi_t} \equiv \pi_{j=2, t} - \pi_{j=1, t}$.}
-		\item{This approximation results in an error causing estimation results to be biased. The true change in wages can be shown to be the following, where $\tilde{s_1}$ denotes the relative skills in period 1, i.e., $\tilde{s}_1 \equiv s_{j=2, t=1} - s_{j=1, t=1}$.}
+
+		\item{In order to estimate changes in skill prices over discrete changes in time, I arrive at the following estimable equation for changes in skill prices. Arriving at this equation, I make use of an approximation. For a derivation, see appendix \ref{appen:wage_change_approx}}
+		
 		\begin{equation}
-		\Delta w = \Delta \pi_{j=2} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi} + \Delta \lambda (\frac{\tilde{\pi}_1 + \tilde{\pi}_2}{2} + \tilde{s}_1)
+		\Delta w = \Delta \pi_{j=1} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi}
+		\end{equation}
+
+		\item{Here, $\Delta$ indicates the change in a value from period $t=1$ to $t=2$. E.g., $\Delta w_i \equiv w_{i, t=2} - w_{i, t=1}$. The tilde indicates task-relative values, i.e., $\tilde{\pi_t} \equiv \pi_{j=2, t} - \pi_{j=1, t}$.}
+		\item{This approximation results in an error causing estimation results to be biased. The true change in wages can be shown to be the following, where $\tilde{s_1}$ denotes the relative skills in period 1, i.e., $\tilde{s}_1 \equiv s_{j=2, t=1} - s_{j=1, t=1}$. A derivation of this result can be found in appendix \ref{appen:wage_change}}
+
+		\begin{equation}
+		\Delta w = \Delta \pi_{j=1} + \frac{\lambda_1 + \lambda_2}{2} \Delta \tilde{\pi} + \Delta \lambda (\frac{\tilde{\pi}_1 + \tilde{\pi}_2}{2} + \tilde{s}_1)
 		\end{equation}
 
 		\begin{itemize}
 			\item{This approximation error term results in larger wage gains for individuals who:}
+
 			\begin{itemize}
-				\item[(1)]{Make larger adjustments towards task two between two periods, i.e., have large $\Delta \lambda$.}
-				\item[(2)]{Have high relative skill in task two, i.e., have high $\tilde{s}_1$.}
+				\item[(1)]{Make larger adjustments towards task two between periods, i.e., have large $\Delta \lambda$.\footnote{It can be seen from equation(\ref{eq:lmb_opt}) that $\Delta \lambda = \lambda_{t=1} - \lambda_{t=0}$ increases in potential wages in task 2 and decreases in potential wages in task 1. Therefore, this additional gain in wages takes high values for individuals with high relative skills in task 2.}}
+				\item[(2)]{Have high relative skill in task 2, i.e., have high $\tilde{s}_1$.}
 			\end{itemize}
+
 			\item[]{and vice versa.}
 		\end{itemize}
-		%TODO: Add interpretation of the bias term here!
+
+		\item{Since both effects depend positively on the relative potential wage in task 2, the approximation error term results in a markup in wage gains for individuals with high relative skills in task 2.}
 	\end{itemize}
 
-\section[Simulation of Wage Changes]{Simulation of Wage Changes\footnote{A closer documentation of the code used for this simulation can be found in appendix \ref{code_docu} of this document.} }
+
+\section[Simulation of Wage Changes]{Simulation of Wage Changes\footnote{A closer documentation of the code used for this simulation can be found in appendix \ref{appen:code_docu} of this document.} }
 	\begin{itemize}
 		\item{I simulate task specific skills in accordance to above stated assumptions: Skills do not change between periods. Thus, I draw skills from a multivariate normal distribution and keep them fixed for each agent. Means are assumed to be (5, 5) with a variance of 3 and a covariance of 0.3. Means as well as variance-covariance-matrix are model parameters that can be varied freely.}
 		\item{Prices are assumed to change between periods. I assume that this change is deterministic and that growth rates are $(\Delta \pi_{j=1}, \Delta \pi_{j=2})=(0.05, 0.1)$. Starting values for these task specific skill prices are $(\pi_{j=1, t=0}, \pi_{j=2, t=0})=(5, 6)$.}
@@ -91,8 +171,9 @@
 
 
 \section{Results from changing the penalty term's specification}
-	This section presents estimation results for a set of different specifications of the utility function, more precisely, the penalty term. This allows to get a better understanding of the approximation error as well as developing a strategy to limit its impact on the estimation results. For the sake of clarity, in each step I vary only two of the three model parameters: penalty weight $\tau$, the exponent of the penalty term, $p$, and the interval from which the baseline task choice is randomly drawn, $b_i$. This section is divided in three subsection. Each of which discusses the consequences of changing one of these parameters. \\
+	This section presents estimation results for a set of different specifications of the utility function, more precisely, the penalty term. This allows to get a better understanding of the approximation error as well as developing a strategy to limit its impact on the estimation results. For the sake of clarity, in each step I vary only two of the three penalty related model parameters: penalty weight $\tau$, the exponent of the penalty term, $p$, and the interval from which the baseline task choice is randomly drawn, $b_i$. This section is divided in three subsection. Each of which discusses the consequences of changing one of these parameters. \\
 	For the first set of specifications, $b_i$ and $p$ are varied while $\tau$ is kept constant at a value of 30. The second set of specifications varies $b_i$ and $\tau$ while $p$ is held constant at a value of 2. \\ %TODO: Set \tau = 30 or 35 in both specifications -> see that results are the same!
+	In addition to the mean estimation error and its standard deviation that are provided in tables (\ref{tab:est_rslt_differences_pp}) and (\ref{tab:est_rslt_differences_pw}), respectively, appendix \ref{appen:dist_mee} provides histograms of the distributions thereof.
 	\subsection{Changing the range of baseline choices}
 		\begin{itemize}
 			\item{Agent's are assumed to have exogenous preferences for a specific split in work-time. This split is drawn from a uniform distribution over some interval.}
@@ -163,9 +244,14 @@
 		\label{tab:est_rslt_differences_pw}
 		\end{table}
 
+
 \newpage
+
+
 \begin{appendix}
-\section{Code Documentation --- outdated ---} \label{code_docu} %TODO Rework this chapter: Wording, add other modules, rework referencing!
+
+
+\section{Code Documentation --- outdated ---} \label{appen:code_docu} %TODO Rework this chapter: Wording, add other modules, rework referencing!
 	\begin{itemize}
 		\item{Drawing task specific skills, file "mc\_skills.py"}
 		\begin{itemize}
@@ -179,7 +265,7 @@
 		\end{itemize}
 		\item{Simulating optimal task choice, file "mc\_optimal\_wage\_choice.py"}
 		\begin{itemize}
-			\item{Using the previously generated task specific skills and task specific skill prices, I calculate each agent's utility according to the utility function defined in equation (\ref{eq:utility}).}
+			\item{Using the previously generated task specific skills and task specific skill prices, I calculate each agent's utility according to the utility function defined in equation (\ref{eq:optimization_problem}).}
 			\item{For this, each agent's baseline decision of her work-time split, $b_i$, is randomly drawn here. It is assumed to be uniform distributed within some borders that can be passed through the "p\_locus" argument.}
 			\item{Both, the penalty weight $\tau$, as well as the exponent of the penalty term $p$ can be passed as arguments to this function.}
 			\item{Provided these arguments of the penalty term as well as potential task specific wages for each period, I calculate the utility-maximizing work-time share $\lambda$ for each period.}
@@ -191,17 +277,74 @@
 			\item{The results of this exercise can be seen in \ref{tab:est_rslt_differences_pp} where I calculated the difference between the estimated parameters and their true values.}
 		\end{itemize}
 	\end{itemize}
-\section{Distribution of mean estimation errors}
+
+
+\section{Distribution of mean estimation errors} \label{appen:dist_mee}
 \begin{figure}[ht]
 \centering
 	\includegraphics[angle=-90, scale=0.4]{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/FIG/rslt_difference_dict_pp.png}
-	\caption{Distribution of mean estimation error for M=50 Monte Carlo simulations. \textbf{Power of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
+	\caption{Distribution of mean estimation errors for M=50 Monte Carlo simulations. \textbf{Power of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
 \end{figure}
 
 \begin{figure}[ht]
 	\includegraphics[angle=-90, scale=0.4]{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/social_skill_prices/MC_simulation/FIG/rslt_difference_dict_pw.png}
-	\caption{Distribution of mean estimation error for M=50 Monte Carlo simulations. \textbf{Weight of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
+	\caption{Distribution of mean estimation errors for M=50 Monte Carlo simulations. \textbf{Weight of the penalty term} is fixed for each row, interval for baseline task choices is fixed for each column.}
 \end{figure}
+
+
+\section{Derivation of the optimal task choice} \label{appen:lambda_opt}
+
+We start from the first order condition of the utility maximization:
+
+\begin{equation}
+	\frac{\partial u_{i, t}(b_i, \lambda, \phi, \tau, \tilde{w})}{\partial \lambda} = \tilde{w} - \phi \tau \frac{(|b_i - \lambda|)^\phi}{b_i - \lambda} \overset{!}{=} 0
+\end{equation}
+
+Defining $x \equiv b_i - \lambda$, this can be restated as follows.
+
+\begin{alignat*}{3}
+	{}					&& \tilde{w} - \phi \tau \frac{(|x|)^\phi}{x} 	&\overset{!}{=} 0 \\
+	\Leftrightarrow 	&& \frac{(|x|)^\phi}{x} 						&= - \frac{\tilde{w}}{\phi \tau} \label{eq:foc_restated} \\
+\end{alignat*}
+
+The absolute value function for any real number $x$ is defined as follows.
+
+\begin{equation}
+	|x| = \left\{
+		\begin{array}{ll}
+			x, \: & \: \text{if $x \geq 0$} \\
+			-x, \: & \: \text{if $x < 0$} \\
+		\end{array}
+	\right.
+\end{equation}
+
+Using this definition, two cases can be distinguished when solving for the optimal task choice $\lambda^*$. In section \ref{sec:FOC}, the domain of this problem is defined to exclude the case of $x=0$ (i.e., $b_i = \lambda_{i,t}$).\\
+Case (1): $x > 0$.
+
+\begin{alignat*}{3}
+	{}				&& \frac{x^\phi}{x} 	&= - \frac{\tilde{w}}{\phi \tau} \\
+	\Leftrightarrow && x					&= (- \frac{\tilde{w}}{\phi \tau})^{\frac{1}{\phi-1}}, \text{with $x = b_i - \lambda$} \\
+	\Leftrightarrow && \lambda^* 			&= b_i - (- \frac{\tilde{w}}{\phi \tau})^{\frac{1}{\phi-1}}
+\end{alignat*}
+
+Case (2): $x < 0$.
+
+\begin{alignat*}{3}
+	{}				&& \frac{(-x)^\phi}{x} 					&= - \frac{\tilde{w}}{\phi \tau} \\
+	\Leftrightarrow && \frac{-1}{-1} \frac{(-x)^\phi}{x} 	&=  - \frac{\tilde{w}}{\phi \tau} \\
+	\Leftrightarrow && \frac{(-x)^\phi}{-x} 				&= \frac{\tilde{w}}{\phi \tau} \\
+	\Leftrightarrow && x 									&= (\frac{\tilde{w}}{\phi \tau})^\frac{1}{\phi-1}, \text{with $x = b_i - \lambda$} \\
+	\Leftrightarrow && \lambda^*							&= b_i - (\frac{\tilde{w}}{\phi \tau})^\frac{1}{\phi-1} \\
+\end{alignat*}
+
+\section{Calculating inter-temporal wage change}
+
+\subsection{Approximation of the inter-temporal wage change} \label{appen:wage_change_approx}
+
+\subsection{Determining the exact wage change} \label{appen:wage_change}
+
+
+
 \end{appendix}
 
 
