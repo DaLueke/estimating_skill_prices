@@ -1,7 +1,7 @@
 
 
 def mc_optimal_wage_choice(
-        n, T, J, penalty,
+        N, T, J, penalty,
         p_weight=20,
         p_locus=[0.5, 0.5],
         p_exponent=2,
@@ -21,7 +21,7 @@ def mc_optimal_wage_choice(
         n               number of individuals to simulate
         T               time periods to simulate
         J               number of tasks to choose from
-        Penalty         functional form of the penalty term, currently supports
+        penalty         functional form of the penalty term, currently supports
                         options 'quad' for a quadratic form and 'log' for a
                         logistic term.
         p_weight        (optional) gives the weight of the quadratic penalty
@@ -45,25 +45,30 @@ def mc_optimal_wage_choice(
     Plus: If skills have a greater impact on wages, then the impact of changes
     in prices on lmb will decrease - as skills are timeinvariant for now.
     '''
-
     # import packages
-    import numpy as np
-    import pandas as pd
     from scipy.optimize import minimize
+    import pandas as pd
+    import numpy as np
+    import sys
+    import os
 
     # import other modules
-    from mc_skills import draw_skills
-    from mc_prices import draw_skill_prices
+    from DGP.mc_skills import draw_skills
+    from DGP.mc_prices import draw_skill_prices
+
+    # Make this function callable
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.append(BASE_DIR)
 
     # Draw simulated skills and prices
-    sim_skills = draw_skills(n=n, J=J)
+    sim_skills = draw_skills(N=N, J=J, T=T)
     sim_prices = draw_skill_prices(T=T, J=J, **kwargs)
 
     # Define individual wage as a function of worktime shares including a
     # standard normal dist. errorterm
     def wage(lmb, i, t):
-        return (1-lmb)*(sim_skills[i, :] + sim_prices[:, t])[0] \
-            + (lmb)*(sim_skills[i, :] + sim_prices[:, t])[1]
+        return (1-lmb)*(sim_skills[t, i, :] + sim_prices[:, t])[0] \
+            + (lmb)*(sim_skills[t, i, :] + sim_prices[:, t])[1]
 
     # Define utility as a function of wage and worktime shares
     # Note: defined negative to use minimizing function
@@ -81,13 +86,13 @@ def mc_optimal_wage_choice(
 
     # In case of exponential penalty: find randomized values for the center of
     # the penalty term.
-    locus = np.random.uniform(low=p_locus[0], high=p_locus[1], size=n)
+    locus = np.random.uniform(low=p_locus[0], high=p_locus[1], size=N)
 
     # Find optimal worktime shares lmb, according wages and untility
-    lmb_opt = np.empty([T, n])
-    util_opt = np.empty([T, n])
-    wage_opt = np.empty([T, n])
-    for i in range(n):
+    lmb_opt = np.empty([T, N])
+    util_opt = np.empty([T, N])
+    wage_opt = np.empty([T, N])
+    for i in range(N):
         for t in range(T):
             opt = minimize(
                 fun=utility_function,
@@ -104,8 +109,8 @@ def mc_optimal_wage_choice(
     # Initialize DataFrame with simulated data
     # define multiindex
     index = pd.MultiIndex(
-                     levels=[list(range(n)), ["lambda", "wage", "utility"]],
-                     codes=[list(np.repeat(range(n), 3)), [0, 1, 2]*n]
+                     levels=[list(range(N)), ["lambda", "wage", "utility"]],
+                     codes=[list(np.repeat(range(N), 3)), [0, 1, 2]*N]
                      )
 
     # write simulated data into multiindexed dataframe
@@ -117,4 +122,4 @@ def mc_optimal_wage_choice(
         mc_data.loc[idx[:, "wage"], t] = wage_opt[t, :]
         mc_data.loc[idx[:, "utility"], t] = util_opt[t, :]
 
-    return mc_data
+    return mc_data, sim_skills, sim_prices

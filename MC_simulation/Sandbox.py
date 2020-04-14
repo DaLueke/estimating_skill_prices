@@ -53,10 +53,33 @@ import matplotlib.pyplot as plt
 
 # import functions from other modules
 from mc_optimal_wage_choice import mc_optimal_wage_choice
+from mc_skills import draw_skills
+from mc_prices import draw_skill_prices
+
+
+draw_skill_prices(J=2, T=2, seed=600, pi_fun="pi_fixed")
 
 # Simulate data
 seed=600
-mc_data = mc_optimal_wage_choice(n=100, T=2, J=2, seed=seed)
+mc_data = mc_optimal_wage_choice(
+    n=100,
+    T=2, J=2,
+    penalty='quad',
+    p_weight=30,
+    p_locus=[0.4, 0.6],
+    p_exponent=3,
+    seed=seed
+    )
+
+# calculate w2t - w1t to see if its always positive. Only then,
+# the necessary condition for maximum, which involves the square root of this
+# term, is defined.
+sim_skills = draw_skills(n=100, J=2, seed=seed)
+sim_prices = draw_skill_prices(T=2, J=2, seed=seed)
+
+# count number of individuals where wage task 1 - wage task 0 <0
+sum((sim_skills[:, :] + sim_prices[:, 0])[:,0] - (sim_skills[:, :] + sim_prices[:, 0])[:,1] <0)
+
 
 # estimate price changes frmo t=1 perspective
 # calculate approximated lmb_bar (for now: for t=0 und t=1)
@@ -125,12 +148,66 @@ plt.plot(lmb_bar, summand3+wage_change_approx, color='g', linewidth=2)
 #####################################################
 ###########################################
 ###########################################
-# substract approx error from actual "true" wage changes
-y = (wage_change - summand3).astype(float)
+# Checking the derivation of actual wage change.
 
-# regress this difference on lmb_bar
-sms.OLS(endog=y, exog=sms.add_constant(np.array(lmb_bar)).astype(float)).fit().summary()
+# import modules and functions
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from mc_optimal_wage_choice import mc_optimal_wage_choice
+from mc_skills import draw_skills
+from mc_prices import draw_skill_prices
+
+# First: Draw realized wages as well as workers' skills and task prices.
 
 
-x=[0.5, 0.5]
-np.random.uniform(low=x[0], high=x[1], size=10)
+# Define indexer and parameters
+np.random.seed(600)     # set seed for Data Generating Process
+N = 1000                 # number of observations
+M = 50                  # number of MC interations
+idx = pd.IndexSlice     # define Indexslice
+
+# Define optional arguments of DGP.
+kwargs = {
+          # (1) Arguments for price changing process.
+          "pi_fun": "pi_fixed",
+          "const": [0.05, 0.1]
+          }
+
+# Draw optimal task choices and resulting wages
+df, skills, prices = mc_optimal_wage_choice(
+                            n=N,
+                            T=2,
+                            J=2,
+                            penalty="quad",
+                            p_weight=25,
+                            p_locus=[0.2,0.8],
+                            p_exponent=2,
+                            **kwargs
+                            )
+df[0:100]
+# Calculate wage changes in simlated data
+sim_wage_change = (df.loc[idx[:, "wage"],1] - df.loc[idx[:, "wage"],0]).array
+
+# Calculate wage changes analytically
+# Draw price-changes and skills
+s_tilde = skills[:,1] - skills[:,0]
+
+tilde_pi = prices[1,:] - prices[0,:]
+
+# Calculate \Delta \lambda as well as \bar{lambda}
+D_lambda =  (df.loc[idx[:, "lambda"],1] - df.loc[idx[:, "lambda"],0]).array
+Bar_lambda = ((df.loc[idx[:, "lambda"],1] + df.loc[idx[:, "lambda"],0]) /2).array
+
+calc_wage_change = (prices[0,1] - prices[0,0]) \
+                 + Bar_lambda*(tilde_pi[1]-tilde_pi[0]) \
+                 + D_lambda * ((tilde_pi[1]+tilde_pi[0])/2 + s_tilde)
+
+# Scatter the absolute difference between the wage changes
+plt.scatter(sim_wage_change, calc_wage_change)
+plt.plot([0.04,0.12], [0.04,0.12], color="r")
+plt.xlabel("Analytically derived wage changes")
+plt.ylabel("Simulated wage changes")
+plt.savefig(fname="C:\\Users\\danie\\Desktop\\wage_change.png")
+
+sim_wage_change - calc_wage_change

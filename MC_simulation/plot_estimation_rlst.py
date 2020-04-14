@@ -22,7 +22,7 @@ file = "rslt_difference_dict"
 # file += "_pp"
 file += "_pw"
 
-df, df_mean_sd = read_estimation_rslt(M=10, file=file)
+df, df_mean_sd = read_estimation_rslt(M=50, file=file)
 
 # Get indices from simluated data.
 cols = df.index.get_level_values(level=0).unique()
@@ -49,9 +49,9 @@ nbins = np.arange(-0.3, 0.3, 0.001)
 # Draw subplots
 for n_c, c in enumerate(cols):
     for n_r, r in enumerate(rows):
+        ax[n_r, n_c].axvline(x=0.0, color="red", zorder=1, alpha=0.8)
         hist = list(zip(*df.loc[idx[str(c), str(r)], :]))[1]
-        ax[n_r, n_c].hist(hist, color="blue", bins=nbins)
-        ax[n_r, n_c].axvline(x=0.0, color="red")
+        ax[n_r, n_c].hist(hist, color="blue", bins=nbins, zorder=2)
 
         # name rows of plot-grid.
         if n_c == 0:
