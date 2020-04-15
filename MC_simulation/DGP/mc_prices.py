@@ -6,7 +6,7 @@ def draw_skill_prices(
     pi_fun='pi_fixed',
     low=-0.2,
     high=0.2,
-    const=[0.05, 0.1]
+    const=[0.0, 0.05]
 ):
     """ Draws initial skill prices and simulates random prices changes.
     Arguments:
@@ -60,8 +60,8 @@ def draw_skill_prices(
 
     # Set initial task prices
     # Assume task 1 (social) has a lower price than 2 (non-social)
-    pi1_0 = 5
-    pi2_0 = 6
+    pi1_0 = 0
+    pi2_0 = 0.1
 
     # Define price array
     pi = np.empty([J, T])

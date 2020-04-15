@@ -102,7 +102,7 @@ def mc_optimal_wage_choice(
                 bounds=[(0.0, 1.0)],
                 options={"maxiter": 15}
                 )
-            lmb_opt[t, i] = np.round(opt["x"], 4)
+            lmb_opt[t, i] = np.round(opt["x"], 6)
             util_opt[t, i] = (-1)*opt["fun"]
             wage_opt[t, i] = wage(lmb_opt[t, i], i, t)
 

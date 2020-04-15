@@ -28,10 +28,10 @@ def draw_skills(
     # np.random.seed(seed)
 
     # For now, assume that skills are positively correlated
-    skills_var = np.array([[3, 0.3], [0.3, 3]])
+    skills_var = np.array([[0, 0.], [0., 1]])
 
     # I standardize skills to have mean 5
-    skills_mean = np.array([5, 5])
+    skills_mean = np.array([0, 0])
 
     # Draw skills for n observations
     skills = np.random.multivariate_normal(
