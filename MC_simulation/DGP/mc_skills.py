@@ -1,9 +1,8 @@
 
 
-def draw_skills(
+def draw_initial_skills(
     N,
     J,
-    T,
 ):
     """ This script draws skill endowments for J tasks and n individuals.
     For now skill endowments are assumed to be time-invariant (absence of skill
@@ -27,21 +26,26 @@ def draw_skills(
     # # Set parameter
     # np.random.seed(seed)
 
-    # For now, assume that skills are positively correlated
+    # For now, assume that skills are not correlated
     skills_var = np.array([[0, 0.], [0., 1]])
 
-    # I standardize skills to have mean 5
+    # I standardize skills to have mean 0
     skills_mean = np.array([0, 0])
 
     # Draw skills for n observations
-    skills = np.random.multivariate_normal(
+    skills = [np.round(np.random.multivariate_normal(
         mean=skills_mean,
         cov=skills_var,
         size=(N)
-        )
+        ), 6)]
 
     # In a specification without changes in skills:
     # Repeat same skills array for each of T periods.
-    skills = np.tile(skills, (T, 1, 1))
 
     return skills
+
+
+def draw_acculumated_skills(skills, lmb):
+    skills[:, 1] = skills[:, 1] + ((lmb - 0.5) * 0.1)
+    # skills[:, 1] = skills[:, 1] + 10
+    return [skills]

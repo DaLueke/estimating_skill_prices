@@ -53,33 +53,35 @@ def mc_optimal_wage_choice(
     import os
 
     # import other modules
-    from DGP.mc_skills import draw_skills
     from DGP.mc_prices import draw_skill_prices
+    from DGP.mc_skills import draw_initial_skills
+    from DGP.mc_skills import draw_acculumated_skills
 
     # Make this function callable
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(BASE_DIR)
 
     # Draw simulated skills and prices
-    sim_skills = draw_skills(N=N, J=J, T=T)
+    sim_skills = draw_initial_skills(N=N, J=J)
     sim_prices = draw_skill_prices(T=T, J=J, **kwargs)
 
     # Define individual wage as a function of worktime shares including a
     # standard normal dist. errorterm
-    def wage(lmb, i, t):
-        return (1-lmb)*(sim_skills[t, i, :] + sim_prices[:, t])[0] \
-            + (lmb)*(sim_skills[t, i, :] + sim_prices[:, t])[1]
+    def wage(lmb, sim_skills, i, t):
+        return (lmb)*(sim_skills[t][i, :] + sim_prices[:, t])[1]
 
     # Define utility as a function of wage and worktime shares
     # Note: defined negative to use minimizing function
     # TODO: Does the current version actually work for log_utility?
     #       Does the locus-arg result in error?
     def utility_log(lmb, i, t):
-        return -1*(wage(lmb, i, t) + np.log(lmb) + np.log(1-lmb))
+        return -1*(wage(lmb, sim_skills, i, t) + np.log(lmb) + np.log(1-lmb))
 
     # Define an alternative utility function that is quadratic in lmb
-    def utility_quad(lmb, i, t, locus):
-        return -1*(wage(lmb, i, t) - p_weight*(abs(locus[i]-lmb))**p_exponent)
+    def utility_quad(lmb, sim_skills, i, t, locus):
+        return -1*(wage(lmb, sim_skills, i, t) -
+                   p_weight*(abs(locus[i]-lmb))**p_exponent
+                   )
 
     # What penalty term should be used is provided by argument "penalty"
     utility_function = eval('utility_' + penalty)
@@ -92,19 +94,25 @@ def mc_optimal_wage_choice(
     lmb_opt = np.empty([T, N])
     util_opt = np.empty([T, N])
     wage_opt = np.empty([T, N])
-    for i in range(N):
-        for t in range(T):
+    for t in range(T):
+        for i in range(N):
+            if t > 0:
+                new_skills = draw_acculumated_skills(
+                            skills=sim_skills[t-1].copy(),
+                            lmb=lmb_opt[t-1].copy()
+                            )
+                sim_skills = np.append(sim_skills, new_skills, axis=0)
             opt = minimize(
                 fun=utility_function,
                 x0=0.5,
-                args=(i, t, locus),
+                args=(sim_skills, i, t, locus),
                 method='SLSQP',
                 bounds=[(0.0, 1.0)],
-                options={"maxiter": 15}
+                # options={"maxiter": 15}
                 )
             lmb_opt[t, i] = np.round(opt["x"], 6)
             util_opt[t, i] = (-1)*opt["fun"]
-            wage_opt[t, i] = wage(lmb_opt[t, i], i, t)
+            wage_opt[t, i] = wage(lmb_opt[t, i], sim_skills, i, t)
 
     # Initialize DataFrame with simulated data
     # define multiindex
