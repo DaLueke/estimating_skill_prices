@@ -59,21 +59,25 @@ def draw_skill_prices(
         return pi_fixed
 
     # Set initial task prices
-    # Assume task 1 (social) has a lower price than 2 (non-social)
+    # Assume task 1 has a lower price than task 2
     pi1_0 = 0
     pi2_0 = 0.1
 
     # Define price array
     pi = np.empty([J, T])
+
+    # Set intial prices
     pi[:, 0] = pi1_0, pi2_0
+    pi[:, 1] = pi1_0, pi2_0
 
     # Get price changes.
     # Find price changes function of choice:
     price_changes = eval(pi_fun)
     d_pi = price_changes(T=T, J=J, low=low, high=high, const=const)
 
-    # Calculate prices in each period
-    for t in range(1, T):
+    # Calculate prices in each period, while there is no price change in a base
+    # period (from t=0 to t=1)
+    for t in range(2, T):
         pi[:, t] = pi[:, t-1] + d_pi[:, t-1]
 
     return pi
