@@ -46,6 +46,6 @@ def draw_initial_skills(
 
 
 def draw_acculumated_skills(skills, lmb):
-    skills[:, 1] = skills[:, 1] + ((lmb - 0.5) * 0.1)
+    skills[:, 1] = skills[:, 1] + (lmb - 0.5)
     # skills[:, 1] = skills[:, 1] + 10
     return [skills]
