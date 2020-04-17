@@ -46,9 +46,9 @@ def draw_simulation_data(
         N=N,
         T=T, J=2,
         penalty='quad',
-        p_weight=35,
-        p_locus=(0.3, 0.7),
-        p_exponent=2,
+        p_weight=p_weight,
+        p_locus=p_locus,
+        p_exponent=p_exponent,
         **kwargs
         )
 
@@ -73,7 +73,5 @@ def draw_simulation_data(
     # Optional: Store simulated data in pickle file.
     if store_data:
         pickle.dump(df, open('..\\OUT\\simulation_data.p', 'wb'))
-    else:
-        pass
 
     return df
