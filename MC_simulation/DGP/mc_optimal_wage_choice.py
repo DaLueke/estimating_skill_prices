@@ -2,9 +2,9 @@
 
 def mc_optimal_wage_choice(
         N, T, J, penalty,
-        p_weight=20,
-        p_locus=[0.5, 0.5],
-        p_exponent=2,
+        p_weight,
+        p_locus,
+        p_exponent,
         **kwargs
 ):
     '''
@@ -95,20 +95,27 @@ def mc_optimal_wage_choice(
     util_opt = np.empty([T, N])
     wage_opt = np.empty([T, N])
     for t in range(T):
+        if t > 0:
+            new_skills = draw_acculumated_skills(
+                        skills=sim_skills[t-1].copy(),
+                        lmb=lmb_opt[t-1].copy()
+                        )
+            sim_skills = np.append(sim_skills, new_skills, axis=0)
+            # new_skills = sim_skills[t-1].copy()
+            # new_skills[:, 1] = (new_skills[:, 1] + ((lmb_opt[t-1] - 0.5) * 0.1))
+            # sim_skills = np.append(
+            #     sim_skills,
+            #     [new_skills],
+            #     axis=0
+            #     )
         for i in range(N):
-            if t > 0:
-                new_skills = draw_acculumated_skills(
-                            skills=sim_skills[t-1].copy(),
-                            lmb=lmb_opt[t-1].copy()
-                            )
-                sim_skills = np.append(sim_skills, new_skills, axis=0)
             opt = minimize(
                 fun=utility_function,
                 x0=0.5,
                 args=(sim_skills, i, t, locus),
                 method='SLSQP',
                 bounds=[(0.0, 1.0)],
-                # options={"maxiter": 15}
+                options={"maxiter": 100, "ftol": 1e-08}
                 )
             lmb_opt[t, i] = np.round(opt["x"], 6)
             util_opt[t, i] = (-1)*opt["fun"]
