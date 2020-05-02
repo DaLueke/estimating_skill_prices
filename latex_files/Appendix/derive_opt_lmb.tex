@@ -1,0 +1,54 @@
+%!TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\subsection{Derivation of the optimal task choice} \label{app:derive_lmb_opt}
+We start from the first order condition of the utility maximization:
+
+\begin{equation}
+	\frac{\partial u_{i, t}(b_i, \lambda_{i,t}, \phi, \theta, \tilde{w}_{i,t})}{\partial \lambda_{i,t}} = \tilde{w}_{i,t} + 2 \phi \theta \frac{(|b_i - \lambda_{i,t}|)^\phi}{b_i - \lambda_{i,t}} \overset{!}{=} 0 \tag{\ref{eq:first_derivative}}
+\end{equation}
+Defining $x \equiv b_i - \lambda_{i,t}$, this can be restated as follows.
+
+\begin{alignat*}{3}
+	{}					&& \tilde{w}_t + 2 \phi \theta \frac{(|x|)^\phi}{x} 	&\overset{!}{=} 0 \\
+	\Leftrightarrow 	&& \frac{(|x|)^\phi}{x} 								&= - \frac{\tilde{w}_t}{2 \phi \theta} \label{eq:foc_restated} \\
+\end{alignat*}
+The absolute value function for any real number $x$ is defined as follows.
+
+\begin{equation}
+	|x| = \left\{
+		\begin{array}{ll}
+			x, \: & \: \text{if $x \geq 0$} \nonumber\\
+			-x, \: & \: \text{if $x < 0$} \nonumber\\
+		\end{array}
+	\right.
+\end{equation}
+Using this definition, two cases can be distinguished when solving for the optimal task choice $\lambda^*_{i,t}$. \\
+
+Case (1): $x \geq 0$ (i.e., $b_i \geq \lambda_{i,t}$).
+
+\begin{alignat*}{3}
+	{}				&& \frac{x^\phi}{x} 	&= - \frac{\tilde{w}_{i,t}}{2 \phi \theta} \\
+	\Leftrightarrow && x					&= (- \frac{\tilde{w}_{i,t}}{2 \phi \theta})^{\frac{1}{\phi-1}}, \text{with $x = b_i - \lambda_{i,t}$} \\
+	\Leftrightarrow && \lambda^*_{i,t} 		&= b_i - (- \frac{\tilde{w}_{i,t}}{2 \phi \theta})^{\frac{1}{\phi-1}}
+\end{alignat*}
+
+Case (2): $x < 0 $ (i.e., $b_i < \lambda_{i,t}$).
+
+\begin{alignat*}{3}
+	{}				&& \frac{(-x)^\phi}{x} 					&= - \frac{\tilde{w}_{i,t}}{2 \phi \theta} \\
+	\Leftrightarrow && \frac{(-x)^\phi}{-x} 				&= \frac{\tilde{w}_{i,t}}{2 \phi \theta} \\
+	\Leftrightarrow && - x 									&= (\frac{\tilde{w}_{i,t}}{2 \phi \theta})^\frac{1}{\phi-1}, \text{with $x = b_i - \lambda_{i,t}$} \\
+	\Leftrightarrow && \lambda^*_{i,t}						&= b_i + (\frac{\tilde{w}_{i,t}}{2 \phi \theta})^\frac{1}{\phi-1} \\
+\end{alignat*}
+Which can be rewritten to the expression in equation (\ref{eq:lmb_opt}):
+\begin{equation} \tag{\ref{eq:lmb_opt}}
+	\lambda^*_{i,t} = \left\{
+	\begin{array}{ll}
+		b_i - (\frac{- \tilde{w}_{i,t}}{2 \phi \theta})^{\frac{1}{\phi -1}}, \: & \: \text{if $b_i \geq \lambda_{i,t}$}\\
+		b_i + (\frac{\tilde{w}_{i,t}}{2 \phi \theta})^{\frac{1}{\phi - 1}}, \: & \: \text{if $b_i < \lambda_{i,t}$}
+	\end{array}
+\right.
+\end{equation}
+\end{document}

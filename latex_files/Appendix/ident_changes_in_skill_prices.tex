@@ -1,0 +1,46 @@
+%!TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\subsection{Identifying Changes in Skill Prices} \label{app:ident_changes_in_skill_prices}
+This appendix provides a more detailed derivation of the identification of skill prices that is presented in section \ref{sec:identifying-changes-in-skill-prices}. Just like in that section, I start from the total derivative of the utility function with respect to time.
+\begin{align} 
+	\frac{d }{dt} u_{i}(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t)) &=	\underbrace{\frac{\partial u_i(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t))}{\partial \lambda_i^*(\tilde{w}_i(t))} \frac{\partial \lambda_i^*(\tilde{w}_i(t))}{\partial \tilde{w}_i(t)}  \frac{d \tilde{w}_i(t)}{dt}}_{(1)} \nonumber \\
+	{} &+ \underbrace{\frac{\partial u_i(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t))} {\partial \tilde{w}_i(t)} \frac{d \tilde{w}_i(t)}{dt}}_{(2)} \tag{\ref{eq:util_total_derivative}} \\
+	\intertext{By the first order condition, part (1) of above equation equals zero for utility maximizing task choices $\lambda_{i,t}^*$. This can be throught of as an application of the envelope theorem, where $u_{i,t} $is the objective function of a parameterized optimization problem and $\lambda_{i,t}^*(\tilde{w}_{i,t})$ is the parameterized optimizer. As parameter $\tilde{w}_{i,t}$ changes, changes in the optimizer $\lambda_{i,t}^*(\tilde{w}_{i,t})$ of the objective function do not contribute to the change in the objective function.\linebreak
+	The partial derivation of $u_{i,t}$ w.r.t. $\tilde{w}_{i,t}$ in part (2) is very easily calculated for the particular realized wage function that results for $J=2$ tasks:}
+	\frac{\partial u_{i}(\lambda_{i}^*(\tilde{w}_{i}(t)), \tilde{w}_{i}(t)}{\tilde{w}_{i}(t)} \frac{d\tilde{w}_i(t)}{dt}   =& \frac{\partial}{\partial \tilde{w}_{i}(t)} \left( \lambda_{i}^* \tilde{w}_{i}(t) - 2 \theta |b_i - \lambda_{i}^*|^\phi\right) \frac{d\tilde{w}_i(t)}{dt} \nonumber\\
+	{} &= \lambda_{i}^* \frac{d\tilde{w}_i(t)}{dt} \nonumber \\
+	\intertext{By substituting this transformation of part (2) into the total differential (equation (\ref{eq:util_total_derivative})), we obtain equation (\ref{eq:util_derivative_env_th}):}
+	\frac{d }{dt} u_{i}(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t)) &= \lambda^*(\tilde{w}_i(t)) \frac{d \tilde{w}_i (t)}{d t} \tag{\ref{eq:util_derivative_env_th}} 
+\end{align}
+\begin{align}
+	\intertext{Integrating equation (\ref{eq:util_derivative_env_th}) from $t-1$ to $t$:}
+	\int^{t}_{t-1} \left( \frac{\partial u_{i}(\lambda_{i}^*(\tilde{w}_{i}(\tau)), \tilde{w}_{i}(\tau)}{\tilde{w}_{i}(\tau)} \frac{d\tilde{w}_i(\tau)}{dt}\right) d\tau &= \int^{t}_{t-1} \left(\lambda^*(\tilde{w}_i(t)) \frac{d \tilde{w}_i (t)}{d t} \right) d\tau \nonumber
+\end{align}
+I define $\Delta$ to denote the discrete change in a variable between two periods. Specifically, in case of the utility $\Delta u_{i,t}$ denotes the discrete change in utility from period $t-1$ to $t$, i.e.:
+\begin{align} \label{appen:definition_delta}
+	\Delta u_{i,t} &\equiv \int^{t}_{t-1} \left( \frac{\partial u_{i}(\lambda_{i}^*(\tilde{w}_{i}(\tau)), \tilde{w}_{i}(\tau)}{\tilde{w}_{i}(\tau)} \frac{d\tilde{w}_i(\tau)}{dt}\right) d\tau \nonumber \\
+	{} &= \int^{t}_{t-1} \left(\lambda^*(\tilde{w}_i(t)) \frac{d \tilde{w}_i (t)}{d t} \right) d\tau \nonumber
+\end{align}
+Rewriting this by application of integration by substitution with $\tilde{w}_i(t) = \tilde{w}_{i,t}$ and relying on the abridged notation with $t$ as subscript again:
+\begin{align}
+\Delta u_{i,t} &= \int^{\tilde{w}_{i,t}}_{\tilde{w}_{i,t-1}} \lambda_{i,t}^* d\tilde{w}_{i,\tau} \tag{\ref{eq:util_integration}}
+\end{align}
+I now apply the following linear approximation of the task choice parameter:
+\begin{align}
+	\frac{\lambda_{i,\tau}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,\tau} - \tilde{w}_{i,t-1}} &\approx \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t} - \tilde{w}_{i,t-1}} \nonumber \\
+	\Leftrightarrow \lambda_{i,\tau}^* &\approx \lambda_{i,t-1}^* + \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t} - \tilde{w}_{i,t-1}} (\tilde{w}_{i,\tau} - \tilde{w}_{i,t-1}) \tag{\ref{eq:lambda_approximation}}
+\end{align}
+Now substituting equation (\ref{eq:lambda_approximation}) into equation (\ref{eq:util_integration}):
+\begin{align}
+	\Delta u_{i,t} &= \int^{w_{i,t}}_{w_{i,t-1}} \left(  \lambda_{i,t-1}^* + \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t} - \tilde{w}_{i,t-1}} (\tilde{w}_{i,\tau} - \tilde{w}_{i,t-1})\right) dw_{i,\tau} \nonumber \\
+	\intertext{Calculate the closed interval by evaluating the antiderivative:}
+	{} &= \left[ \lambda_{i,t-1}^* \tilde{w}_{i,\tau} \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t} - \tilde{w}_{i,t-1}}(\frac{1}{2} \tilde{w}_{i, \tau}^2 - \tilde{w}_{i,t-1} \tilde{w}_{i,\tau}) \right ]^{\tilde{w}_{i,t}}_{\tilde{w}_{i,t-1}} \nonumber \\
+	\intertext{Evaluating the closed interval:}
+	{} &= \lambda_{i,t-1}^* \Delta \tilde{w}_{i,t} + \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t}-\tilde{w}_{i,t-1}} ( \frac{1}{2} \tilde{w}_{i,t}^2 - \tilde{w}_{i,t-1} \tilde{w}_{i,t} + \frac{1}{2} \tilde{w}_{i,t-1}^2 ) \nonumber \\
+	\intertext{Rearranging and making use of the binomial expansion:}
+	{} =& \lambda_{i,t-1}^* \Delta \tilde{w}_{i,t} + \frac{1}{2} \frac{\lambda_{i,t}^* - \lambda_{i,t-1}^*}{\tilde{w}_{i,t}-\tilde{w}_{i,t-1}} (\tilde{w}_{i,t} - \tilde{w}_{i,t-1})^2 \nonumber \\
+	\intertext{Which can be rearranged to:}
+	{} &= \bar{\lambda}_{i,t}^* \Delta \tilde{w}_{i,t} \tag{\ref{eq:utility_change}}
+\end{align}
+\end{document}

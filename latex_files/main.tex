@@ -1,0 +1,138 @@
+%%%%%%%%%%%%%%%%
+%%%%%% TODO %%%%
+%%%%%%%%%%%%%%%%
+% Notation: 
+% Be consistent: There should be two different notations regarding t indices: (1) t as a subscript. This is used to indicate that paramters are SOME function of time. In this case
+% I should not explicitly mention any function arguments. i.e.: Use \lambda_{i,t} AND NOT \lambda_{i,t}(w_{i,t}). (2) t as explicit functiona argument. In this case DO NOT use t as 
+% subscript!
+
+
+
+
+%%%%%%%%%%%%%%%%
+%%  PREAMBLE  %%
+%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, oneside, full]{article}
+\usepackage[left=3cm, top=2cm, right=2cm, bottom=2cm]{geometry}		% set margins
+\usepackage{times}													% Use font type Times New Roman
+\usepackage[onehalfspacing]{setspace} 								% set linespacing
+\renewcommand{\footnotesize}{\fontsize{10pt}{12pt}\selectfont}		% format footnotes
+\usepackage[bibstyle=authoryear,citestyle=authoryear]{biblatex} 	% citing
+\renewcommand*{\nameyeardelim}{\addcomma\space}						% Add comma before year in reference
+\usepackage{subfiles}	
+
+% Solving a bug in the float package: Prevent indent in first line after code for figure/table
+\AfterEndEnvironment{figure}{\noindent\ignorespaces}
+\AfterEndEnvironment{table}{\noindent\ignorespaces}
+
+% math packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% tables packages
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% include png files
+\usepackage{graphicx}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\bibliography{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/references.bib}
+
+
+%%%%%%%%%%%%
+%%  BODY  %%
+%%%%%%%%%%%%
+
+\begin{document}
+
+\newgeometry{left=3cm, top=5cm, right=2cm, bottom=2cm} % geometry for title page
+\begin{titlepage}
+\thispagestyle{empty} 		% get rif of page numbering
+\renewcommand{\maketitle}{
+	\begin{center}
+
+	\large{\textbf{Estimating Skill Prices in a Model of Continuous Task Choice
+	}}
+
+	\vspace{5cm}
+
+	Master's Thesis Presented to the
+
+	Department of Economics at the 
+
+	Rheinische Friedrich-Wilhelms-Universit{\"a}t Bonn
+
+	\vspace{1.5cm}
+
+	In Partial Fulfillment of the Requirements for the Degree of
+
+	Master of Science (M.Sc.)
+
+	\vfill
+
+	Supervisor: JProf. Michael Böhm, Ph.D.
+
+	\vspace{3cm}
+
+	Submitted in May 2020 by:
+
+	Daniel Lüke
+
+	Matriculation Number: 3142017
+
+	% \vspace{1.5cm}
+	\end{center}
+}
+
+\maketitle{\vspace{5cm}}
+\end{titlepage}
+
+% Reset margins for document body
+\restoregeometry
+
+% Include table of contents
+\tableofcontents
+\thispagestyle{empty}		% no numbering
+\clearpage
+
+% Set arabic numbering for document body
+\pagenumbering{arabic}
+
+% Import sections of my thesis
+\subfile{Sections/introduction.tex}
+\subfile{Sections/modeling_continous_task_choice.tex}
+\subfile{Sections/simulation_study.tex}
+\subfile{Sections/conclusions.tex}
+
+
+% Include references
+\newpage
+\printbibliography
+
+
+
+%%%%%%%%%%%%%%%%
+%%  Appendix  %%
+%%%%%%%%%%%%%%%%
+\newpage
+\pagenumbering{roman} % set roman numbering for appendix
+\numberwithin{equation}{section}
+% \newcommand{\section@cntformat}{Appendix \thesection:\ }
+\begin{appendix}
+
+\section{Modeling Continuous Task Choice: Derivations}
+
+\subfile{Appendix/derive_utility_with_J2}
+\subfile{Appendix/foc_soc_utility}
+\subfile{Appendix/derive_opt_lmb}
+\subfile{Appendix/ident_changes_in_skill_prices}
+\section{Simulation Study: Derivations}
+\subfile{Appendix/derive_changes_penalty_term}
+
+\end{appendix}
+
+
+\end{document}

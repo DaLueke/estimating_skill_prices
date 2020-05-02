@@ -1,0 +1,27 @@
+%!TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\subsection{First and Second Order Conditions of the Utility Maximization Problem}\label{app:foc_soc_utility}
+Starting from the utility function in equation (\ref{eq:two_task_utility}), this section presents the first and second derivative of the utility function $u_{i,t}$ w.r.t. choice parameter $\lambda_{i,t}$. Based on these results, the first and second order conditions for a global maximum of the utility function can be identified.\\
+\begin{align}
+	\intertext{Starting from the utility function in a setting with $J=2$ tasks.}
+	u_{i,t} &= \lambda_{i,t} \tilde{w}_{i,t} - 2\theta|b_i - \lambda_{i,t}|^\phi \tag{\ref{eq:two_task_utility}}\\
+	\intertext{Calculate the first derivative of utility w.r.t. task choice parameter $\lambda_{i,t}$ by application of the chain rule.}
+	\frac{\partial u_{i,t}}{\partial \lambda_{i,t}} &= \tilde{w}_{i,t} - 2\theta \phi |b_i - \lambda_{i,t}|^{\phi-1} \frac{\partial}{\partial \lambda_{i,t}} [|b_i - \lambda_{i,t}|^\phi] \nonumber \\
+	\intertext{Applying the derivation rules for absolute value functions:}
+	{} &= \tilde{w}_{i,t} + 2\theta \phi |b_i - \lambda_{i,t}|^{\phi-1} \frac{b_i - \lambda_{i,t}}{|b_i - \lambda_{i,t}|} \nonumber \\
+	\intertext{Finally, after some rearrangements:}
+	{} &= \tilde{w}_{i,t} + 2\theta \phi \frac{|b_i - \lambda_{i,t}|^\phi}{b_i - \lambda_{i,t}} \label{eq:first_derivative}
+	\intertext{Notice that this derivative is not defined at $b_i = \lambda_{i,t}$.}
+	\intertext{Continuing from equation (\ref{eq:first_derivative}), now calculate the second derivative of the utility function w.r.t. task choice parameter $\lambda_{i,t}$ by application of the division rule.}
+	\frac{\partial^2 u_{i,t}}{\partial \lambda_{i,t}^2} &= 2\theta \phi \left(\frac{\frac{\partial }{\partial \lambda_{i,t}} [|b_i - \lambda_{t,i}|^\phi] (b_i - \lambda_{i,t}) - |b_i - \lambda_{i,t}|^\phi \frac{\partial}{\partial \lambda_{i,t}} [b_i - \lambda_{i,t}]}{(b_i - \lambda_{i,t})^2} \right) \nonumber \\
+	\intertext{By application of the chain rule and derivation rules for absolute value functions:}
+	{} &= 2 \theta \phi \left(\frac{- \phi |b_i - \lambda_{i,t}|^\phi + |b_i - \lambda_{i,t}|^\phi}{(b_i - \lambda_{i,t})^2} \right) \nonumber \\
+	\intertext{Rearranging:}
+	{} &= 2 \theta \phi (1 - \phi) \frac{|b_i- \lambda_{i,t}|^\phi}{(b_i - \lambda_{i,t})^2} \label{eq:second_derivative}
+\end{align}
+From equation (\ref{eq:second_derivative}) it can be seen immediately that the second derivative of the utility function w.r.t. task choices $\lambda_{i,t}$ is (strictly) positive for penalty exponents $\phi$ (strictly) larger than one, resulting in a (strictly) concave utility function. Analogously, penalty exponents (strictly) smaller than one will result in a (strictly) convex utility function.\\
+Similarly to the first derivative, the second derivative is not defined at $b_i = \lambda_{i,t}$.
+
+
+\end{document}

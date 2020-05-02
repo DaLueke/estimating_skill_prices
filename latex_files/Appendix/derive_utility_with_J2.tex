@@ -1,0 +1,19 @@
+%!TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\subsection{Deriving the utility function with $J=2$ Tasks} \label{app:derive_two_task_utility}
+Point of departure is equation (\ref{eq:utility}) where $J=2$:
+\begin{align}
+	u_{i,t} &= \sum_{j=1}^{2} \lambda_{i,j,t} w_{i,j,t} - \theta \sum^2_{j=1} |b_{i,j} - \lambda_{i,j,t}|^\phi \nonumber \\
+	{} 		&= \lambda_{i,j=1, t} w_{i,j=1, t} + \lambda_{i,j=2, t} w_{i,j=2, t} - \theta \left( |b_{i,j=1} - \lambda_{i,j=1,t}|^\phi + |b_{i,j=2} - \lambda_{i,j=2,t}|^\phi \right) \nonumber \\
+	\intertext{With $\sum_{j=1}^J \lambda_{i,j,t} = 1$ and $\sum_{j=1}^J b_{i,j} = 1$ I can substitute $\lambda_{i,j=1,t}$ by $(1 - \lambda_{i,j=2,t})$ and \linebreak $b_{i,j=1}$ by $(1-b_{i,j=2})$ this can be rearranged to:}
+	u_{i,t} &= w_{i,j=1,t}+ \lambda_{i,t} \tilde{w}_{i,t} - 2 \theta |b_i - \lambda_{i,t}|^\phi\nonumber \\
+	\intertext{where}
+	\lambda_{i,t} &\equiv \lambda_{i, j=2,t},  \nonumber \\
+	\tilde{w}_{i,t} &\equiv w_{i,j=2,t} - w_{i,j=1,t}, \; \text{and}\nonumber \\
+	b_i &\equiv _{i,j=2}.\nonumber 
+	\intertext{Finally, normalizing $w_{i,j=1,t}=0$, we arrive at equation \ref{eq:two_task_utility}:}
+	u_{i,t} &= \lambda_{i,t} \tilde{w}_{i,t} - 2 \theta |b_i - \lambda_{i,t}|^\phi \tag{\ref{eq:two_task_utility}}
+\end{align}
+
+\end{document}

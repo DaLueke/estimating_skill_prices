@@ -1,0 +1,35 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2}A Model of Continuous Task Choice}{3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1}The Utility Maximization Problem}{3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2}Implications in a Model with J=2 Tasks}{5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.3}Identifying Changes in Skill Prices}{6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.4}Estimation of the Model}{8}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3}Simulation Study}{9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.1}Data Generating Process}{9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.2}Monte Carlo Estimation of Skill Prices}{11}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4}Conclusions}{12}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {A}Modeling Continuous Task Choice: Derivations}{i}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.1}Deriving the utility function with $J=2$ Tasks}{i}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.2}First and Second Order Conditions of the Utility Maximization Problem}{i}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.3}Derivation of the optimal task choice}{ii}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.4}Identifying Changes in Skill Prices}{iv}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {B}Simulation Study: Derivations}{vi}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {B.1}Deriviation of Changes in the Penalty Term}{vi}% 
