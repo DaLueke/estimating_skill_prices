@@ -1,3 +1,157 @@
+import pandas as pd
+import numpy as np
+import sys
+import os
+
+##### DEBUGGING #####
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(os.getcwd()))))
+sys.path.append(os.path.abspath(os.getcwd()))
+sys.path.append(os.path.abspath(os.getcwd()) + "\\DGP")
+#####################
+
+from DGP.draw_data import draw_simulation_data
+
+kwargs = {
+          # (1) Arguments for price changing process.
+          "pi_fun": "pi_fixed",
+          "const": [0.0, 0.05]
+          }
+
+
+
+np.random.seed(1)
+sim_data = draw_simulation_data(
+    T=3,
+    N=100,
+    J=2,
+    penalty="quad",
+    p_weight=35,
+    p_locus=(0.5, 0.5),
+    p_exponent=2,
+    **kwargs
+)
+
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', -1)
+
+print(sim_data)
+
+np.random.seed(1)
+from mc_optimal_wage_choice import mc_optimal_wage_choice
+mc_data, skills, prices = mc_optimal_wage_choice(
+    N=100,
+    T=3, J=2,
+    penalty='quad',
+    p_weight=35,
+    p_locus=(0.5, 0.5),
+    p_exponent=2,
+    **kwargs
+    )
+mc_data.loc[pd.IndexSlice[:, 'lambda'], 0].values
+
+
+
+
+
+(skills[1][3, :] + prices[:, 2])[1]
+
+
+
+
+
+
+
+
+
+
+
+
+test_0 = [np.array([1., 2.])]
+
+test_1 = test_0[0].copy()
+test_1[1] = test_1[1]+ test_1[1]*0.1
+test_0 = np.append(test_0, [test_1], axis=0)
+
+
+
+import pandas as pd
+import numpy as np
+import sys
+import os
+
+# import other modules
+from DGP.mc_prices import draw_skill_prices
+from DGP.mc_skills import draw_initial_skills
+from DGP.mc_skills import draw_acculumated_skills
+sim_skills = draw_initial_skills(N=10, J=2)
+skills = draw_acculumated_skills(
+            skills=sim_skills[0],
+            lmb=np.array(range(10))
+            )
+sim_skills = np.append(sim_skills, skills, axis=0)
+
+
+
+
+
+
+import numpy as np
+N=100
+
+# For now, assume that skills are positively correlated
+skills_var = np.array([[0, 0.], [0., 1]])
+
+
+
+a = [np.array([1.0,2.0,3.0])]
+b = [np.array([7.0,8.0,9.0])]
+a = np.append(a, b, axis=0)
+a[0]
+c = a[1].copy()
+c[1] = c[1] + 0.1
+c
+a = np.append(a, [c], axis=0)
+a
+# I standardize skills to have mean 5
+skills_mean = np.array([0, 0])
+
+skills = [np.round(np.random.multivariate_normal(
+    mean=skills_mean,
+    cov=skills_var,
+    size=(N)
+    ), 6)]
+4*(skills[0][0,:] + 20.23)[0]
+
+skills2 = skills[0][:, 1]  + (0.5 - 0.5) * 0.1
+
+skills2 = np.append(skills, [np.random.multivariate_normal(
+    mean=np.array([10, 10]),
+    cov=skills_var,
+    size=(N)
+    )],
+    axis=0)
+
+a=1
+
+
+(skills2[1][4, :] + [0, 1])[0]
+
+
+np.array([0.4, 0.3, 0.7, 0.56]) - 0.5
+
+
+
+
+
+
+
+
+
+
+
 #### plot optimal lambda, which is piecewise given by the p-q-formula, as it is
 #### defined to be in (0,1). This script plots the optimal lambdas for an array
 #### of values for theta - which is equal to (pi_1 + s_1) - (pi_2 + s_2).
