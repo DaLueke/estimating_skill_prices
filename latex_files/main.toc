@@ -16,9 +16,9 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {3.1}Data Generating Process}{9}% 
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2}Monte Carlo Estimation of Skill Prices}{11}% 
+\contentsline {subsection}{\numberline {3.2}Monte Carlo Estimation of Skill Prices}{12}% 
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4}Conclusions}{12}% 
+\contentsline {section}{\numberline {4}Conclusions}{14}% 
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {A}Modeling Continuous Task Choice: Derivations}{i}% 
 \defcounter {refsection}{0}\relax 

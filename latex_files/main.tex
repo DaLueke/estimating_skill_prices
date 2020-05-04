@@ -25,6 +25,8 @@
 % Solving a bug in the float package: Prevent indent in first line after code for figure/table
 \AfterEndEnvironment{figure}{\noindent\ignorespaces}
 \AfterEndEnvironment{table}{\noindent\ignorespaces}
+% Make sure floats stay in their (sub)section
+\usepackage[section]{placeins}
 
 % math packages
 \usepackage{amsmath}
@@ -103,8 +105,11 @@
 
 % Import sections of my thesis
 \subfile{Sections/introduction.tex}
+\FloatBarrier
 \subfile{Sections/modeling_continous_task_choice.tex}
+\FloatBarrier
 \subfile{Sections/simulation_study.tex}
+\FloatBarrier
 \subfile{Sections/conclusions.tex}
 
 
