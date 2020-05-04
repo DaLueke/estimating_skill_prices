@@ -90,14 +90,9 @@ As seen from the estimation result in table \ref{tab:base_period_regression_rlst
 \begin{center}
 \begin{tabular}{lclc}
 \toprule
-\textbf{Dep. Variable:}    &        y         & \textbf{  R-squared (uncentered):}      &     0.997   \\
-\textbf{Model:}            &       OLS        & \textbf{  Adj. R-squared (uncentered):} &     0.997   \\
-\textbf{Method:}           &  Least Squares   & \textbf{  F-statistic:       }          & 1.721e+04   \\
-\textbf{Date:}             & Wed, 22 Apr 2020 & \textbf{  Prob (F-statistic):}          & 1.62e-125   \\
-\textbf{Time:}             &     21:11:52     & \textbf{  Log-Likelihood:    }          &    423.85   \\
-\textbf{No. Observations:} &         100      & \textbf{  AIC:               }          &    -843.7   \\
-\textbf{Df Residuals:}     &          98      & \textbf{  BIC:               }          &    -838.5   \\
-\textbf{Df Model:}         &           2      & \textbf{                     }          &             \\
+\textbf{Dep. Variable:}    & adj. wage change & \textbf{  R-squared (uncentered):}      &     0.997   \\
+\textbf{No. Observations:} &       100        & \textbf{  Adj. R-squared (uncentered):} &     0.997   \\
+\textbf{F-statistic:}      &  1.721e+04       & \textbf{  Prob (F-statistic):}          & 1.62e-125   \\
 \bottomrule
 \end{tabular}
 \begin{tabular}{lcccccc}
@@ -107,15 +102,9 @@ As seen from the estimation result in table \ref{tab:base_period_regression_rlst
 \textbf{$\lambda_{i, t}^{*2}$} &       0.9633  &        0.006     &   150.591  &         0.000        &        0.951    &        0.976     \\
 \bottomrule
 \end{tabular}
-\begin{tabular}{lclc}
-\textbf{Omnibus:}       & 36.470 & \textbf{  Durbin-Watson:     } &    2.010  \\
-\textbf{Prob(Omnibus):} &  0.000 & \textbf{  Jarque-Bera (JB):  } &  111.225  \\
-\textbf{Skew:}          &  1.222 & \textbf{  Prob(JB):          } & 7.05e-25  \\
-\textbf{Kurtosis:}      &  7.552 & \textbf{  Cond. No.          } &     12.9  \\
-\bottomrule
-\end{tabular}
+
 \end{center}
-\caption{Results of an OLS estimation of wage changes in the base period on both, $\lambda_{i, t}^{*}$ and $\lambda_{i, t}^{*2}$. This estimation result is from one of the $M = 1000$ simulated datasets used in the Monte Carlo estimation. Regressors do not include a constant because the true model intersects the point of origin dur to the normalization of $w_{i,j=1,t} = 0$.}
+\caption{Results of an OLS estimation of wage changes in the base period on both, $\lambda_{i, t}^{*}$ and $\lambda_{i, t}^{*2}$. This estimation result is from one of the $M = 1000$ simulated datasets used in the Monte Carlo estimation. Regressors do not include a constant because the true model intersects the point of origin due to the normalization of $w_{i,j=1,t} = 0$.}
 \label{tab:base_period_regression_rlst}
 \end{table}
 In each of the $M=1000$ iterations of this Monte Carlo estimation, changes in skills and penalty term are estimated using this regression model. After that, wage changes of the subsequent time period are adjusted for the product of the later period's task choices and the estimated coefficient of the base period. Resulting residual wage changes are the basis of the estimation of changes in skill prices.
