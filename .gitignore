@@ -123,6 +123,8 @@ Sandbox.py
 *.cb
 *.cb2
 .*.lb
+*.bcf
+*.run.xml
 
 # Build tool auxiliary files:
 *.fdb_latexmk
