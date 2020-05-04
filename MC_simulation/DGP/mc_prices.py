@@ -9,6 +9,10 @@ def draw_skill_prices(
     const=[0.0, 0.05]
 ):
     """ Draws initial skill prices and simulates random prices changes.
+    With the normalization of wages in task 1 to zero, some parts
+    of this function are redundent. However, the way this function is currently
+    set up allows for a simulation without this normalization, too.
+
     Arguments:
         T              (int) Number of periods
         J              (int) Number of tasks
@@ -28,7 +32,8 @@ def draw_skill_prices(
         pi1, pi2       JxT array of prices for tasks 1 and 2.
 
     Assumptions:
-        (1) Initial Skill Prices
+        (1) Initial relative skill price for task 2 is +5%
+        (2) No price changes in a base period (t=0 to t=1)
     """
     # import packages
     import numpy as np

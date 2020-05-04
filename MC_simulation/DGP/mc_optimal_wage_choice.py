@@ -24,12 +24,13 @@ def mc_optimal_wage_choice(
         penalty         functional form of the penalty term, currently supports
                         options 'quad' for a quadratic form and 'log' for a
                         logistic term.
-        p_weight        (optional) gives the weight of the quadratic penalty
+        p_weight        gives the weight of the quadratic penalty
                         term. Defalt is 20.
-        p_locus         (optional) gives borders of randomly (uniform) drawn
+        p_locus         gives borders of randomly (uniform) drawn
                         baseline decision of worktime shares. (i.e. the
                         minimum of the penalty term.)
-        p_exponent      (optional) gives the exponent of the penalty term.
+        p_exponent      gives the exponent of the penalty term.
+        **kwargs        Specifications of skill price simulation function.
 
     Returns:
         Hierarchical dataframe with individuals as first level index and
@@ -37,13 +38,6 @@ def mc_optimal_wage_choice(
 
     Assumptions:
         Functional form of wage and utility follows the arguments in my Thesis.
-        Particularly: Penalty term is sum of logs of worktime shares.
-
-    Thoughts:
-    Skills are the source of differences in incomes in this model, as all
-    individuals face the same prices.
-    Plus: If skills have a greater impact on wages, then the impact of changes
-    in prices on lmb will decrease - as skills are timeinvariant for now.
     '''
     # import packages
     from scipy.optimize import minimize
@@ -53,9 +47,9 @@ def mc_optimal_wage_choice(
     import os
 
     # import other modules
-    from DGP.mc_prices import draw_skill_prices
-    from DGP.mc_skills import draw_initial_skills
     from DGP.mc_skills import draw_acculumated_skills
+    from DGP.mc_skills import draw_initial_skills
+    from DGP.mc_prices import draw_skill_prices
 
     # Make this function callable
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -70,14 +64,11 @@ def mc_optimal_wage_choice(
     def wage(lmb, sim_skills, i, t):
         return (lmb)*(sim_skills[t][i, :] + sim_prices[:, t])[1]
 
-    # Define utility as a function of wage and worktime shares
-    # Note: defined negative to use minimizing function
-    # TODO: Does the current version actually work for log_utility?
-    #       Does the locus-arg result in error?
+    # Define utility function with logarithmic penalty term
     def utility_log(lmb, i, t):
         return -1*(wage(lmb, sim_skills, i, t) + np.log(lmb) + np.log(1-lmb))
 
-    # Define an alternative utility function that is quadratic in lmb
+    # Define utility function with exponential penalty term
     def utility_quad(lmb, sim_skills, i, t, locus):
         return -1*(wage(lmb, sim_skills, i, t) -
                    p_weight*(abs(locus[i]-lmb))**p_exponent
@@ -95,19 +86,14 @@ def mc_optimal_wage_choice(
     util_opt = np.empty([T, N])
     wage_opt = np.empty([T, N])
     for t in range(T):
+        # skill accumulation for perdiods t>0
         if t > 0:
             new_skills = draw_acculumated_skills(
                         skills=sim_skills[t-1].copy(),
                         lmb=lmb_opt[t-1].copy()
                         )
             sim_skills = np.append(sim_skills, new_skills, axis=0)
-            # new_skills = sim_skills[t-1].copy()
-            # new_skills[:, 1] = (new_skills[:, 1] + ((lmb_opt[t-1] - 0.5) * 0.1))
-            # sim_skills = np.append(
-            #     sim_skills,
-            #     [new_skills],
-            #     axis=0
-            #     )
+        # obtain optimal task choices from utility maximization
         for i in range(N):
             opt = minimize(
                 fun=utility_function,
@@ -131,7 +117,6 @@ def mc_optimal_wage_choice(
     # write simulated data into multiindexed dataframe
     mc_data = pd.DataFrame(index=index, columns=list(range(T)))
     idx = pd.IndexSlice
-
     for t in range(T):
         mc_data.loc[idx[:, "lambda"], t] = lmb_opt[t, :]
         mc_data.loc[idx[:, "wage"], t] = wage_opt[t, :]

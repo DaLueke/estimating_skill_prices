@@ -11,7 +11,9 @@ def draw_simulation_data(
     store_data=False,
     **kwargs
 ):
-    """ This function draws simulation data.
+    """ This function is used to draw simulation data.
+    It comprises the data generating process and makes use of the
+    subfunctions of the DGP.
 
     Arguments:
         T           (int) # of periods

@@ -4,27 +4,22 @@ def draw_initial_skills(
     N,
     J,
 ):
-    """ This script draws skill endowments for J tasks and n individuals.
-    For now skill endowments are assumed to be time-invariant (absence of skill
-    accumulation).
+    """ This script draws initial skill endowments for J tasks and N
+    individuals.
+    For the simulations I normalize skills in task 1 to be zero. Therefore,
+    parts of this function are redundant. However, this function
+    is set up so that it works without that normalization, too.
 
     Arguments:
-        n           (int) Number of individuals to simulate
+        N           (int) Number of individuals to simulate
         J           (int) Number of tasks
 
     Returns:
-        skills      n x J array of skills
+        skills      N x J array of skills
 
-    Assumptions:
-        (1) Skills' distribution
-            (1a) Skills' variances: Skills are positively correlated
-            (1b) Skills' means
     """
     # Import packages
     import numpy as np
-
-    # # Set parameter
-    # np.random.seed(seed)
 
     # For now, assume that skills are not correlated
     skills_var = np.array([[0, 0.], [0., 1]])
@@ -39,13 +34,17 @@ def draw_initial_skills(
         size=(N)
         ), 6)]
 
-    # In a specification without changes in skills:
-    # Repeat same skills array for each of T periods.
-
     return skills
 
 
 def draw_acculumated_skills(skills, lmb):
+    """ This function is used to simulate skill accumulation.
+
+    Assumptions:
+        - skill accumulation is modeled as a "learning by doing" process.
+            -> worker get better in that task that they spend the majority of
+            their working time on.
+    """
+
     skills[:, 1] = skills[:, 1] + (lmb - 0.5)
-    # skills[:, 1] = skills[:, 1] + 10
     return [skills]
