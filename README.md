@@ -15,11 +15,11 @@ The filestructure of this repo is as follows:
 .- mc_prices.py: Contains functions for the simuation of task specific skill prices.
 .- mc_optimal_wage_choice.py: Relies on simulated skill prices and endownments and provides optimal task choices and resulting utilities and wages.
 .- draw_data.py: Wraps around the DGP and returns the simulation data
-* **FIG**: Figures that are produced in the simulation study and are used in my thesis are stored here.
 * **OUT**: In case one decides to store the simulation data as json files, it will be stored in this folder.
 * **old_code**: Deprecated python codes that are not used in the current state of the project.
 
 **latex_files**: Contains all LaTex files that build my thesis.
 * **Appendix**: Various subsections of the appendix.
 * **Sections**: Each section of my thesis is contained in the respective files in this directory.
+* **FIG**: Figures that are produced in the simulation study and are used in my thesis are stored here.
 * *main.tex*: Main document of the thesis. This file imports all other subfiles and builds my thesis.
