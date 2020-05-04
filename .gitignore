@@ -125,6 +125,8 @@ Sandbox.py
 .*.lb
 *.bcf
 *.run.xml
+*.bbl
+*.blg
 
 # Build tool auxiliary files:
 *.fdb_latexmk
