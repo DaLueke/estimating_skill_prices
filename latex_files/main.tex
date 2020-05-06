@@ -1,15 +1,4 @@
 %%%%%%%%%%%%%%%%
-%%%%%% TODO %%%%
-%%%%%%%%%%%%%%%%
-% Notation: 
-% Be consistent: There should be two different notations regarding t indices: (1) t as a subscript. This is used to indicate that paramters are SOME function of time. In this case
-% I should not explicitly mention any function arguments. i.e.: Use \lambda_{i,t} AND NOT \lambda_{i,t}(w_{i,t}). (2) t as explicit functiona argument. In this case DO NOT use t as 
-% subscript!
-
-
-
-
-%%%%%%%%%%%%%%%%
 %%  PREAMBLE  %%
 %%%%%%%%%%%%%%%%
 
@@ -44,9 +33,9 @@
 \bibliography{C:/Users/danie/Documents/Master_Bonn/5_Semester/Thesis/references.bib}
 
 
-%%%%%%%%%%%%
-%%  BODY  %%
-%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%
+%%  Titlepage  %%
+%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
@@ -92,6 +81,10 @@
 \maketitle{\vspace{5cm}}
 \end{titlepage}
 
+%%%%%%%%%%%%
+%%  BODY  %%
+%%%%%%%%%%%%
+
 % Reset margins for document body
 \restoregeometry
 
@@ -125,6 +118,8 @@
 \newpage
 \pagenumbering{roman} % set roman numbering for appendix
 \numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
 % \newcommand{\section@cntformat}{Appendix \thesection:\ }
 \begin{appendix}
 
@@ -134,8 +129,9 @@
 \subfile{Appendix/foc_soc_utility}
 \subfile{Appendix/derive_opt_lmb}
 \subfile{Appendix/ident_changes_in_skill_prices}
-\section{Simulation Study: Derivations}
+\section{Simulation Study}
 \subfile{Appendix/derive_changes_penalty_term}
+\subfile{Appendix/tables_and_figures}
 
 \end{appendix}
 

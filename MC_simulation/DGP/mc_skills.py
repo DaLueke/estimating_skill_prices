@@ -22,17 +22,19 @@ def draw_initial_skills(
     import numpy as np
 
     # For now, assume that skills are not correlated
-    skills_var = np.array([[0, 0.], [0., 1]])
+    skills_var = np.array([[0, 0.], [0., .25]])
 
     # I standardize skills to have mean 0
     skills_mean = np.array([0, 0])
 
     # Draw skills for n observations
-    skills = [np.round(np.random.multivariate_normal(
-        mean=skills_mean,
-        cov=skills_var,
-        size=(N)
-        ), 6)]
+    skills = [np.round(
+        np.random.multivariate_normal(
+            mean=skills_mean,
+            cov=skills_var,
+            size=(N)
+            ), 6)
+        ]
 
     return skills
 
