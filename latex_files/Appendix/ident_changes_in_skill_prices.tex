@@ -6,11 +6,11 @@ This appendix provides a more detailed derivation of the identification of skill
 \begin{align} 
 	\frac{d }{dt} u_{i}(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t)) &=	\underbrace{\frac{\partial u_i(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t))}{\partial \lambda_i^*(\tilde{w}_i(t))} \frac{\partial \lambda_i^*(\tilde{w}_i(t))}{\partial \tilde{w}_i(t)}  \frac{d \tilde{w}_i(t)}{dt}}_{(1)} \nonumber \\
 	{} &+ \underbrace{\frac{\partial u_i(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t))} {\partial \tilde{w}_i(t)} \frac{d \tilde{w}_i(t)}{dt}}_{(2)} \tag{\ref{eq:util_total_derivative}} \\
-	\intertext{By the first order condition, part (1) of above equation equals zero for utility maximizing task choices $\lambda_{i,t}^*$. This can be throught of as an application of the envelope theorem, where $u_{i,t} $is the objective function of a parameterized optimization problem and $\lambda_{i,t}^*(\tilde{w}_{i,t})$ is the parameterized optimizer. As parameter $\tilde{w}_{i,t}$ changes, changes in the optimizer $\lambda_{i,t}^*(\tilde{w}_{i,t})$ of the objective function do not contribute to the change in the objective function.\linebreak
-	The partial derivation of $u_{i,t}$ w.r.t. $\tilde{w}_{i,t}$ in part (2) is very easily calculated for the particular realized wage function that results for $J=2$ tasks:}
+	\intertext{By the first order condition, part (1) of above equation equals zero for utility maximizing task choices $\lambda_{i,t}^*$. This can be thought of as an application of the envelope theorem, where $u_{i,t}$ is the objective function of a parameterized optimization problem and $\lambda_{i,t}^*(\tilde{w}_{i,t})$ is the parameterized optimizer. As parameter $\tilde{w}_{i,t}$ changes, changes in the optimizer $\lambda_{i,t}^*(\tilde{w}_{i,t})$ of the objective function do not contribute to the change in the objective function.\linebreak
+	The partial derivation of $u_{i,t}$ w.r.t. $\tilde{w}_{i,t}$ in part (2) is easily calculated for the particular realized wage function that results for $J=2$ tasks:}
 	\frac{\partial u_{i}(\lambda_{i}^*(\tilde{w}_{i}(t)), \tilde{w}_{i}(t)}{\tilde{w}_{i}(t)} \frac{d\tilde{w}_i(t)}{dt}   =& \frac{\partial}{\partial \tilde{w}_{i}(t)} \left( \lambda_{i}^* \tilde{w}_{i}(t) - 2 \theta |b_i - \lambda_{i}^*|^\phi\right) \frac{d\tilde{w}_i(t)}{dt} \nonumber\\
 	{} &= \lambda_{i}^* \frac{d\tilde{w}_i(t)}{dt} \nonumber \\
-	\intertext{By substituting this transformation of part (2) into the total differential (equation (\ref{eq:util_total_derivative})), we obtain equation (\ref{eq:util_derivative_env_th}):}
+	\intertext{By substituting this transformation of part (2) into the total differential (equation (\ref{eq:util_total_derivative})), equation (\ref{eq:util_derivative_env_th}) is obtained.}
 	\frac{d }{dt} u_{i}(\lambda_i^*(\tilde{w}_i(t)), \tilde{w}_i(t)) &= \lambda^*(\tilde{w}_i(t)) \frac{d \tilde{w}_i (t)}{d t} \tag{\ref{eq:util_derivative_env_th}} 
 \end{align}
 \begin{align}

@@ -2,8 +2,8 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
-\subsection{Derivation of the optimal task choice} \label{app:derive_lmb_opt}
-We start from the first order condition of the utility maximization:
+\subsection{Derivation of the Optimal Task Choice} \label{app:derive_lmb_opt}
+I start from the first order condition of the utility maximization:
 
 \begin{equation}
 	\frac{\partial u_{i, t}(b_i, \lambda_{i,t}, \phi, \theta, \tilde{w}_{i,t})}{\partial \lambda_{i,t}} = \tilde{w}_{i,t} + 2 \phi \theta \frac{(|b_i - \lambda_{i,t}|)^\phi}{b_i - \lambda_{i,t}} \overset{!}{=} 0 \tag{\ref{eq:first_derivative}}
@@ -42,7 +42,7 @@ Case (2): $x < 0 $ (i.e., $b_i < \lambda_{i,t}$).
 	\Leftrightarrow && - x 									&= (\frac{\tilde{w}_{i,t}}{2 \phi \theta})^\frac{1}{\phi-1}, \text{with $x = b_i - \lambda_{i,t}$} \\
 	\Leftrightarrow && \lambda^*_{i,t}						&= b_i + (\frac{\tilde{w}_{i,t}}{2 \phi \theta})^\frac{1}{\phi-1} \\
 \end{alignat*}
-Which can be rewritten to the expression in equation (\ref{eq:lmb_opt}):
+Which can be rearranged to the expression in equation (\ref{eq:lmb_opt}):
 \begin{equation} \tag{\ref{eq:lmb_opt}}
 	\lambda^*_{i,t} = \left\{
 	\begin{array}{ll}
