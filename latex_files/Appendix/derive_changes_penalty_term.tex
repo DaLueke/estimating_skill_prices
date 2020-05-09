@@ -7,14 +7,14 @@
 As part of the estimation of changes in skill prices, changes in the penalty term need to be estimated. These changes in the penalty term are a funtion of optimal task choices $\lambda_{i,\tau}^*, \; \tau \in \{t-1, t\}$. In this appendix, I show that changes in the penalty term result as a polynomial with penalty exponent of degree $\phi$.\\
 From equation (\ref{eq:wage_change}) we have that wage changes come as a composition of three parts:
 \begin{equation}
-	\Delta w_{i,t} = \bar{\lambda}^*_{i,t} \Delta \tilde{\pi}_{t} + \bar{\lambda}^*_{i,t} \Delta \tilde{s}_{i,t} + \left[ \Phi_{i}(\lambda_{i,t}^*) - \Phi_{i}(\lambda_{i,t-1}^*) \right] \tag{\ref{eq:wage_change}}
+	\Delta w_{i,t} = \bar{\lambda}^*_{i,t} \Delta \tilde{\pi}_{t} + \bar{\lambda}^*_{i,t} \Delta \tilde{s}_{i,t} + \left[ \rho_{i}(\lambda_{i,t}^*) - \rho_{i}(\lambda_{i,t-1}^*) \right] \tag{\ref{eq:wage_change}}
 \end{equation} 
-In the following I show that the part related to changes in the penalty term (i.e., $\left[ \Phi_{i}(\lambda_{i,t}^*) - \Phi_{i}(\lambda_{i,t-1}^*) \right]$) can be restated as a polynomial of optimal task choice parameters $\lambda_{i,\tau}^*, \; \tau \in \{t-1, t\}$ of degree $\phi$.
+In the following I show that the part related to changes in the penalty term (i.e., $\left[ \rho_{i}(\lambda_{i,t}^*) - \rho_{i}(\lambda_{i,t-1}^*) \right]$) can be restated as a polynomial of optimal task choice parameters $\lambda_{i,\tau}^*, \; \tau \in \{t-1, t\}$ of degree $\phi$.
 \begin{align}
 	\intertext{Starting from}
-	{} &  \Phi_{i}(\lambda_{i,t}^*) - \Phi_{i}(\lambda_{i,t-1}^*)  \label{eq:appen_penalty_term_1} \\
+	{} &  \rho_{i}(\lambda_{i,t}^*) - \rho_{i}(\lambda_{i,t-1}^*)  \label{eq:appen_penalty_term_1} \\
 	\intertext{with}
-	\Phi_{i}(\lambda_{i,\tau}^*) &= \theta |b_i - \lambda_{i,\tau}^*|^\phi, \; \text{for} \; \tau \in \{t-1, t \} \nonumber \\
+	\rho_{i}(\lambda_{i,\tau}^*) &= \theta |b_i - \lambda_{i,\tau}^*|^\phi, \; \text{for} \; \tau \in \{t-1, t \} \nonumber \\
 	\intertext{With regard to the absolute value function, two cases have to be considered:}
 		|b_i - \lambda_{i,\tau}^*| &= \left\{
 		\begin{array}{ll}
@@ -23,7 +23,7 @@ In the following I show that the part related to changes in the penalty term (i.
 		\end{array} 
 	\right. \nonumber \\
 	\intertext{Consider first case: $b_i - \lambda_{i, \tau}^* \geq 0$. In this case equation \ref{eq:appen_penalty_term_1} can be written as follows:}
-	\Phi_{i}(\lambda_{i,t}^*) - \Phi_{i}(\lambda_{i,t-1}^*) &= (b_i - \lambda_{i,t}^*)^\phi - (b_i - \lambda_{i,t-1}^*)^\phi \nonumber
+	\rho_{i}(\lambda_{i,t}^*) - \rho_{i}(\lambda_{i,t-1}^*) &= (b_i - \lambda_{i,t}^*)^\phi - (b_i - \lambda_{i,t-1}^*)^\phi \nonumber
 	\intertext{Each of the two binomials on the right hand side can be rewritten as bivariate polynomials by application of the binomial expansion:}
 	(b_i - \lambda_{i,\tau}^*)^\phi &= \sum^\phi_{k=0}\binom{\phi}{k} b_i^{\phi-k} (-\lambda_{i,\tau})^k, \; \text{for} \; \tau \in \{t-1, t\} \nonumber
 \end{align}
@@ -31,7 +31,7 @@ It is straightforward to see that in the second case ($ b_i - \lambda_{i, \tau}^
 Thus, changes in the penalty term can be expressed as the differencee between two polynomials of $\lambda_{i,t-1}$ and $\lambda_{i,t}$, respectively. The degree of the resulting polynomial is equal to the penalty exponent $\phi$.\\
 In the simulation study, it is assumed that $\phi = 2$. The changes in the penalty function in this particular case, therefore, result as follows:
 \begin{align}
-	\Phi_{i}(\lambda_{i,t}^*) - \Phi_{i}(\lambda_{i,t-1}^*) &= (b_i - \lambda_{i,t})^2 - (b_i - \lambda_{i,t-1})^2 \nonumber \\
+	\rho_{i}(\lambda_{i,t}^*) - \rho_{i}(\lambda_{i,t-1}^*) &= (b_i - \lambda_{i,t})^2 - (b_i - \lambda_{i,t-1})^2 \nonumber \\
 	{} &= \lambda_{i,t-1}^{*2} + \lambda_{i,t}^{*2} + 2b_i(\lambda_{i,t-1}^* + \lambda_{i,t}^*) \tag{\ref{eq:changes_in_penalty}}
 \end{align}
 
